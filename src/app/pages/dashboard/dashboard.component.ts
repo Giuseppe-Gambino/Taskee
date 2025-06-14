@@ -5,6 +5,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { Colonna, Task } from '../../iterfaces/colonna';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,28 +13,53 @@ import {
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  colonne: any[] = [
+  colonne: Colonna[] = [
     {
       name: 'Da fare',
       color: '#1f201e',
-      order: 0,
+
       tasks: [
-        { order: 1, description: 'darggable' },
-        { order: 2, description: 'move' },
-        { order: 3, description: 'order' },
+        { description: 'drag & drop' },
+        { description: 'studiare react' },
+        { description: 'collegare firebase' },
       ],
     },
-    { name: 'In corso', color: '#533F03', order: 1, tasks: [] },
-    { name: 'Fatto', color: '#174B35', order: 2, tasks: [] },
+    {
+      name: 'In corso',
+      color: '#533F03',
+      tasks: [{ description: 'ricreare Trello' }],
+    },
+    {
+      name: 'Fatto',
+      color: '#174B35',
+
+      tasks: [],
+    },
   ];
 
   drop(event: CdkDragDrop<any[]>) {
-    console.log(event);
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex
-    );
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    }
+    console.log(this.colonne);
+  }
+
+  createNewTask(index: number, text: string) {
+    const newTastk: Task = {
+      description: text,
+    };
+    this.colonne[index].tasks.push(newTastk);
+    console.log(this.colonne);
   }
 }
