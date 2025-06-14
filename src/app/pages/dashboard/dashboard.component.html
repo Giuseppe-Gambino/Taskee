@@ -17,13 +17,47 @@
   </div>
   <!-- main bacheca -->
   <div class="p-3 w-full h-full overflow-scroll">
-    <div class="colonna bg-gray-800">
-      <!-- header colonna -->
-      <div class="flex items-center justify-between px-3 py-1 font-semibold">
-        <h6>Da fare</h6>
-        <p>•••</p>
-      </div>
-      <!-- body colonna -->
-    </div>
+    <ul class="riga-colonne flex gap-x-3.5 items-start">
+      <!-- colonna standard -->
+      <li
+        *ngFor="let sezione of colonne"
+        class="colonna"
+        [ngStyle]="{ 'background-color': sezione.color }"
+      >
+        <!-- header colonna -->
+        <div class="flex items-center justify-between px-3 py-1 font-semibold">
+          <h6>{{ sezione.name }}</h6>
+          <p>•••</p>
+        </div>
+        <!-- body colonna -->
+        <ul
+          class="cont-tasks flex flex-col gap-y-2 min-h-7"
+          cdkDropList
+          (cdkDropListDropped)="drop($event)"
+        >
+          <li
+            *ngFor="let item of sezione.tasks"
+            class="task flex flex-col"
+            cdkDrag
+          >
+            <div class="text-task">{{ item.description }}</div>
+          </li>
+        </ul>
+        <!-- footer colonna -->
+        <div
+          class="px-3 py-1 font-semibold w-full hover:bg-gray-700 rounded-md cursor-pointer"
+        >
+          <h6 class="opacity-65">+ Aggiungi Task</h6>
+        </div>
+      </li>
+
+      <!-- colonna di creazione -->
+      <li class="new-colonna bg-[#ffffff3f] cursor-pointer">
+        <!-- header colonna -->
+        <div class="px-2 pt-0.5 pb-1.5 font-semibold text-white">
+          <h6>+ Aggiunvi un'altra lista</h6>
+        </div>
+      </li>
+    </ul>
   </div>
 </section>
