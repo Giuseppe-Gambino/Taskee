@@ -17,10 +17,14 @@
   </div>
   <!-- main bacheca -->
   <div class="w-full h-full p-3 overflow-scroll">
-    <ul class="riga-colonne flex gap-x-3.5 items-start" cdkDropListGroup>
+    <ul
+      *ngIf="board"
+      class="riga-colonne flex gap-x-3.5 items-start"
+      cdkDropListGroup
+    >
       <!-- colonna standard -->
       <li
-        *ngFor="let sezione of colonne; let i = index"
+        *ngFor="let sezione of board.columns; let i = index"
         class="colonna"
         [ngStyle]="{ 'background-color': sezione.color }"
       >
@@ -33,11 +37,12 @@
         <ul
           class="flex flex-col cont-tasks gap-y-2"
           cdkDropList
-          [cdkDropListData]="sezione.tasks"
+          *ngIf="sezione.task"
+          [cdkDropListData]="sezione.task"
           (cdkDropListDropped)="drop($event)"
         >
           <li
-            *ngFor="let item of sezione.tasks"
+            *ngFor="let item of sezione.task"
             class="flex flex-col task"
             cdkDrag
           >

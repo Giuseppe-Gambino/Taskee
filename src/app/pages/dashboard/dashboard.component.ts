@@ -1,41 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Column, Task } from '../../iterfaces/colonna';
+import { Board, Column, Task } from '../../iterfaces/board';
+import { FirestoreService } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
-export class DashboardComponent {
-  colonne: Column[] = [
-    {
-      name: 'Da fare',
-      color: '#1f201e',
+export class DashboardComponent implements OnInit {
+  constructor(private db: FirestoreService) {}
 
-      tasks: [
-        { description: 'drag & drop' },
-        { description: 'studiare react' },
-        { description: 'collegare firebase' },
-      ],
-    },
-    {
-      name: 'In corso',
-      color: '#533F03',
-      tasks: [{ description: 'ricreare Trello' }],
-    },
-    {
-      name: 'Fatto',
-      color: '#174B35',
+  board!: Board;
 
-      tasks: [],
-    },
-  ];
+  ngOnInit(): void {
+    this.db.getBoard('5A4gTQAbN1URNNbfQTnO').then((board: Board) => {
+      this.board = board;
+      console.log('fullboard', board);
+    });
+  }
 
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
@@ -52,14 +40,12 @@ export class DashboardComponent {
         event.currentIndex
       );
     }
-    console.log(this.colonne);
   }
 
   createNewTask(index: number, text: string) {
     const newTastk: Task = {
       description: text,
     };
-    this.colonne[index].tasks.push(newTastk);
-    console.log(this.colonne);
+    this.board.columns[index].task.push(newTastk);
   }
 }

@@ -5,9 +5,10 @@ export interface Board {
 }
 
 export interface Column {
+  id: string;
   name: string;
   color: string;
-  tasks: Task[];
+  task: Task[];
 }
 
 export interface Task {
