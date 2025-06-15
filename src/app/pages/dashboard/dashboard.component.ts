@@ -5,7 +5,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Colonna, Task } from '../../iterfaces/colonna';
+import { Column, Task } from '../../iterfaces/colonna';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +13,7 @@ import { Colonna, Task } from '../../iterfaces/colonna';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  colonne: Colonna[] = [
+  colonne: Column[] = [
     {
       name: 'Da fare',
       color: '#1f201e',

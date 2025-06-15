@@ -3,12 +3,12 @@
 >
   <!-- header bacheca -->
   <div
-    class="navDash w-full h-14 backdrop-brightness-75 flex items-center justify-between px-5 font-semibold"
+    class="flex items-center justify-between w-full px-5 font-semibold navDash h-14 backdrop-brightness-75"
   >
     <h5>La mia Bacheca</h5>
     <div class="flex items-center gap-3.5">
       <div
-        class="btn btn-xs py-4 border-0 rounded-xs shadow-sm text-base text-gray-800 font-semibold bg-white"
+        class="py-4 text-base font-semibold text-gray-800 bg-white border-0 shadow-sm btn btn-xs rounded-xs"
       >
         + Condividi
       </div>
@@ -16,7 +16,7 @@
     </div>
   </div>
   <!-- main bacheca -->
-  <div class="p-3 w-full h-full overflow-scroll">
+  <div class="w-full h-full p-3 overflow-scroll">
     <ul class="riga-colonne flex gap-x-3.5 items-start" cdkDropListGroup>
       <!-- colonna standard -->
       <li
@@ -31,14 +31,14 @@
         </div>
         <!-- body colonna -->
         <ul
-          class="cont-tasks flex flex-col gap-y-2"
+          class="flex flex-col cont-tasks gap-y-2"
           cdkDropList
           [cdkDropListData]="sezione.tasks"
           (cdkDropListDropped)="drop($event)"
         >
           <li
             *ngFor="let item of sezione.tasks"
-            class="task flex flex-col"
+            class="flex flex-col task"
             cdkDrag
           >
             <div class="text-task">{{ item.description }}</div>
@@ -46,7 +46,7 @@
         </ul>
         <!-- footer colonna -->
         <div
-          class="px-3 py-1 font-semibold w-full hover:bg-gray-700 rounded-md cursor-pointer"
+          class="w-full px-3 py-1 font-semibold rounded-md cursor-pointer hover:bg-gray-700"
         >
           <h6 (click)="createNewTask(i, 'fare qualcosa')" class="opacity-65">
             + Aggiungi Task

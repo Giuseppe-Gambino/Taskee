@@ -23,6 +23,12 @@
 .task {
   background-color: #343c42;
   border-radius: 0.5rem;
+  box-shadow: 0px 1px 1px #091e4240, 0px 0px 1px #091e424f;
+  cursor: grab;
+}
+
+.task:active {
+  cursor: grabbing;
 }
 
 .text-task {
