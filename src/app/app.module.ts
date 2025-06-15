@@ -7,7 +7,7 @@ import { NavBarComponent } from './mainComponents/nav-bar/nav-bar.component';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from './services/environments/environments';
+import { environment } from '../environments/environments';
 
 @NgModule({
   declarations: [AppComponent, NavBarComponent],
