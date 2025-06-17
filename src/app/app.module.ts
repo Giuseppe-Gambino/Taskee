@@ -8,6 +8,8 @@ import { NavBarComponent } from './mainComponents/nav-bar/nav-bar.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from '../environments/environments';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [AppComponent, NavBarComponent],
@@ -19,7 +21,10 @@ import { environment } from '../environments/environments';
 
     AngularFirestoreModule,
   ],
-  providers: [],
+  providers: [
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideFirestore(() => getFirestore()),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

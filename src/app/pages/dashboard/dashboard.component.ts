@@ -7,6 +7,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { Board, Column, Task } from '../../iterfaces/board';
 import { FirestoreService } from '../../services/firestore.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,14 +15,16 @@ import { FirestoreService } from '../../services/firestore.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  constructor(private db: FirestoreService) {}
-
+  constructor(private boardService: FirestoreService) {}
   board!: Board;
 
-  ngOnInit(): void {
-    this.db.getBoard('5A4gTQAbN1URNNbfQTnO').then((board: Board) => {
-      this.board = board;
-      console.log('fullboard', board);
+  ngOnInit() {
+    this.boardService.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
+      if (data) {
+        console.log(data);
+
+        this.board = data;
+      }
     });
   }
 
@@ -46,6 +49,6 @@ export class DashboardComponent implements OnInit {
     const newTastk: Task = {
       description: text,
     };
-    this.board.columns[index].task.push(newTastk);
+    this.board.columns[index].tasks.push(newTastk);
   }
 }

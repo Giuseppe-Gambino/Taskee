@@ -1,7 +1,24 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { firstValueFrom, Observable } from 'rxjs';
+import {
+  Firestore,
+  collection,
+  addDoc,
+  collectionData,
+  doc,
+  docData,
+  CollectionReference,
+  DocumentData,
+} from '@angular/fire/firestore';
+import {
+  combineLatest,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 import { Board, Column, Task } from '../iterfaces/board';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -9,40 +26,84 @@ import { Board, Column, Task } from '../iterfaces/board';
 export class FirestoreService {
   constructor(private firestore: AngularFirestore) {}
 
-  async getBoard(idBoard: string): Promise<Board> {
-    const board = await firstValueFrom(
-      this.firestore.doc<Board>(`board/${idBoard}`).valueChanges()
-    );
+  addBoard(board: Board) {
+    return this.firestore.collection<Board>('boards').add(board);
+  }
 
-    const column: Column[] = await firstValueFrom(
-      this.firestore
-        .collection<Column>(`board/${idBoard}/Column`)
-        .valueChanges({ idField: 'id' })
-    );
+  getBoards(): Observable<Board[]> {
+    return this.firestore
+      .collection<Board>('boards')
+      .valueChanges({ idField: 'id' });
+  }
 
-    console.log('columns', column);
+  getBoard(id: string): Observable<Board | undefined> {
+    return this.firestore.collection<Board>('boards').doc(id).valueChanges();
+  }
 
-    column.forEach((col) => (col.task = []));
+  updateBoard(id: string, board: Partial<Board>) {
+    return this.firestore.collection<Board>('boards').doc(id).update(board);
+  }
 
-    await Promise.all(
-      column.map(async (col) => {
-        const tasks = await firstValueFrom(
-          this.firestore
-            .collection<Task>(`board/${idBoard}/Column/${col.id}/task`)
-            .valueChanges({ idField: 'id' })
-        );
-        col.task = tasks;
-      })
-    );
+  deleteBoard(id: string) {
+    return this.firestore.collection<Board>('boards').doc(id).delete();
+  }
 
-    if (!board) throw new Error('Board non trovata');
+  getColumns(boardId: string): Observable<Column[]> {
+    return this.firestore
+      .collection(`boards/${boardId}/columns`)
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as Column;
+            const id = a.payload.doc.id;
+            return data;
+          })
+        )
+      );
+  }
 
-    const fullBoard: Board = {
-      id: idBoard,
-      name: board.name,
-      columns: column,
-    };
+  getFullBoard(idBoard: string): Observable<Board | undefined> {
+    return this.firestore
+      .doc<Board>(`boards/${idBoard}`)
+      .valueChanges()
+      .pipe(
+        switchMap((board) => {
+          if (!board) return of(undefined);
 
-    return fullBoard;
+          return this.firestore
+            .collection<Column>(`boards/${idBoard}/columns`)
+            .snapshotChanges()
+            .pipe(
+              switchMap((columnSnaps) => {
+                if (!columnSnaps.length) return of({ ...board, columns: [] });
+
+                const columnsWithTasks$: Observable<Column>[] = columnSnaps.map(
+                  (colSnap) => {
+                    const columnId = colSnap.payload.doc.id;
+                    const columnData = colSnap.payload.doc.data() as Column;
+
+                    return this.firestore
+                      .collection<Task>(
+                        `boards/${idBoard}/columns/${columnId}/tasks`
+                      )
+                      .valueChanges({ idField: 'id' })
+                      .pipe(
+                        map((tasks) => ({
+                          ...columnData,
+                          id: columnId,
+                          tasks: tasks || [],
+                        }))
+                      );
+                  }
+                );
+
+                return combineLatest(columnsWithTasks$).pipe(
+                  map((columns) => ({ ...board, id: idBoard, columns }))
+                );
+              })
+            );
+        })
+      );
   }
 }

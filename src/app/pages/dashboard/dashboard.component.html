@@ -37,12 +37,12 @@
         <ul
           class="flex flex-col cont-tasks gap-y-2"
           cdkDropList
-          *ngIf="sezione.task"
-          [cdkDropListData]="sezione.task"
+          *ngIf="sezione.tasks"
+          [cdkDropListData]="sezione.tasks"
           (cdkDropListDropped)="drop($event)"
         >
           <li
-            *ngFor="let item of sezione.task"
+            *ngFor="let item of sezione.tasks"
             class="flex flex-col task"
             cdkDrag
           >
