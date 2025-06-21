@@ -6,7 +6,7 @@ export interface Board {
 }
 
 export interface Column {
-  id: string;
+  id?: string;
   name: string;
   color: string;
   tasks: Task[];

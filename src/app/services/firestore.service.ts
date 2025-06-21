@@ -30,6 +30,18 @@ export class FirestoreService {
     return this.firestore.collection<Board>('boards').add(board);
   }
 
+  addColumn(newColumn: Column, idBoard: string) {
+    return this.firestore
+      .collection<Column>(`boards/${idBoard}/columns`)
+      .add(newColumn);
+  }
+
+  addTask(newTask: Task, idBoard: string, idColumn: string) {
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .add(newTask);
+  }
+
   getBoards(): Observable<Board[]> {
     return this.firestore
       .collection<Board>('boards')

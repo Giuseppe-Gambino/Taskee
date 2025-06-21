@@ -45,10 +45,21 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  createNewTask(index: number, text: string) {
+  createNewColumn(name: string, color: string) {
+    const newColumn: Column = {
+      name,
+      color,
+      tasks: [],
+    };
+
+    this.boardService.addColumn(newColumn, this.board.id);
+  }
+
+  createNewTask(index: number, text: string, idColumn: string) {
     const newTastk: Task = {
       description: text,
     };
+    this.boardService.addTask(newTastk, this.board.id, idColumn);
     this.board.columns[index].tasks.push(newTastk);
   }
 }
