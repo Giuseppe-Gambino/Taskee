@@ -3,9 +3,10 @@
 >
   <!-- header bacheca -->
   <div
+    *ngIf="board"
     class="flex items-center justify-between w-full px-5 font-semibold navDash h-14 backdrop-brightness-75"
   >
-    <h5>La mia Bacheca</h5>
+    <h5>{{ board.name }}</h5>
     <div class="flex items-center gap-3.5">
       <button
         class="text-base font-semibold text-gray-800 bg-white border-0 shadow-sm btn btn-sm rounded-[5px] hover:bg-gray-200"
@@ -24,7 +25,11 @@
     >
       <!-- colonna standard -->
       <li
-        *ngFor="let sezione of board.columns; let i = index"
+        *ngFor="
+          let sezione of board.columns;
+          let i = index;
+          trackBy: trackByColumnId
+        "
         class="colonna"
         [ngStyle]="{ 'background-color': sezione.color }"
       >
@@ -42,7 +47,7 @@
           (cdkDropListDropped)="drop($event)"
         >
           <li
-            *ngFor="let item of sezione.tasks"
+            *ngFor="let item of sezione.tasks; trackBy: trackByTaskId"
             class="flex flex-col task"
             cdkDrag
           >
@@ -55,7 +60,7 @@
         >
           <h6
             *ngIf="sezione.id"
-            (click)="createNewTask(i, 'cavolo', sezione.id)"
+            (click)="createNewTask(sezione.tasks.length, 'cavolo', sezione.id)"
             class="opacity-65"
           >
             + Aggiungi Task

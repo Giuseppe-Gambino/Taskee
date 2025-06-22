@@ -15,17 +15,26 @@ import { Observable } from 'rxjs';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  constructor(private boardService: FirestoreService) {}
+  constructor(private firestore: FirestoreService) {}
   board!: Board;
 
   ngOnInit() {
-    this.boardService.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
+    this.firestore.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
       if (data) {
-        console.log(data);
-
         this.board = data;
+        console.log(data);
       }
     });
+  }
+
+  // trackBy per il ngfor*
+
+  trackByColumnId(index: number, column: Column) {
+    return column.id;
+  }
+
+  trackByTaskId(index: number, task: Task) {
+    return task.id;
   }
 
   drop(event: CdkDragDrop<any[]>) {
@@ -52,14 +61,14 @@ export class DashboardComponent implements OnInit {
       tasks: [],
     };
 
-    this.boardService.addColumn(newColumn, this.board.id);
+    this.firestore.addColumn(newColumn, this.board.id);
   }
 
-  createNewTask(index: number, text: string, idColumn: string) {
-    const newTastk: Task = {
+  createNewTask(indexTask: number, text: string, idColumn: string) {
+    const newTastk = {
       description: text,
+      order: indexTask + 1,
     };
-    this.boardService.addTask(newTastk, this.board.id, idColumn);
-    this.board.columns[index].tasks.push(newTastk);
+    this.firestore.addTask(newTastk, this.board.id, idColumn);
   }
 }

@@ -48,8 +48,23 @@ export class FirestoreService {
       .valueChanges({ idField: 'id' });
   }
 
-  getBoard(id: string): Observable<Board | undefined> {
+  getBoardByid(id: string): Observable<Board | undefined> {
     return this.firestore.collection<Board>('boards').doc(id).valueChanges();
+  }
+
+  getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {
+    return this.firestore
+      .collection<Column>(`boards/${idBoard}/columns`)
+      .valueChanges({ idField: 'id' });
+  }
+
+  getTasksByBoardIdAndColumnId(
+    idBoard: string,
+    idColumn: string
+  ): Observable<Task[]> {
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .valueChanges();
   }
 
   updateBoard(id: string, board: Partial<Board>) {
@@ -97,7 +112,8 @@ export class FirestoreService {
 
                     return this.firestore
                       .collection<Task>(
-                        `boards/${idBoard}/columns/${columnId}/tasks`
+                        `boards/${idBoard}/columns/${columnId}/tasks`,
+                        (ref) => ref.orderBy('order')
                       )
                       .valueChanges({ idField: 'id' })
                       .pipe(
