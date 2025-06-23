@@ -44,6 +44,16 @@ export class DashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
+
+      console.log('prima', event.container.data[3]);
+
+      const task: Task = event.container.data[3];
+      task.order = event.currentIndex + 1;
+
+      console.log('dopo', event.container.data[3]);
+      console.log(event.previousIndex);
+
+      console.log(event.currentIndex);
     } else {
       transferArrayItem(
         event.previousContainer.data,
