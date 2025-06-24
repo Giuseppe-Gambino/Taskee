@@ -45,15 +45,15 @@ export class DashboardComponent implements OnInit {
         event.currentIndex
       );
 
-      console.log('prima', event.container.data[3]);
+      if (event.currentIndex !== event.previousIndex) {
+        this.setNewOrderForElementBetween2(event);
+      } else {
+        console.log('non si e spostato');
+      }
 
-      const task: Task = event.container.data[3];
-      task.order = event.currentIndex + 1;
+      this.chackDuplicates(event);
 
-      console.log('dopo', event.container.data[3]);
-      console.log(event.previousIndex);
-
-      console.log(event.currentIndex);
+      // console.log('array finale', event.container.data);
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -61,6 +61,69 @@ export class DashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
+
+      if (event.container.data.length !== 1) {
+        this.setNewOrderForElementBetween2(event);
+      }
+
+      console.log('array finale cambio', event.container.data);
+      this.chackDuplicates(event);
+    }
+  }
+
+  setNewOrderForElementBetween2(event: CdkDragDrop<any[]>) {
+    const task: Task = event.container.data[event.currentIndex];
+
+    let indexElementTop: number;
+    let indexElementBottom: number;
+
+    if (event.container.data.length === event.currentIndex + 1) {
+      console.log('elemento spostato nell ultima posizione');
+
+      indexElementTop = event.currentIndex - 1;
+
+      task.order = Math.floor(
+        event.container.data[indexElementTop].order + 100
+      );
+
+      return;
+    } else if (event.currentIndex - 1 < 0) {
+      console.log('elemento spostato nella prima posizione');
+
+      indexElementBottom = event.currentIndex + 1;
+
+      task.order = Math.floor(
+        event.container.data[indexElementBottom].order / 2
+      );
+
+      return;
+    } else {
+      indexElementTop = event.currentIndex - 1;
+      indexElementBottom = event.currentIndex + 1;
+    }
+
+    const elementTop = event.container.data[indexElementTop].order;
+    const elementBottom = event.container.data[indexElementBottom].order;
+
+    task.order = Math.floor((elementTop + elementBottom) / 2);
+  }
+
+  chackDuplicates(event: CdkDragDrop<any[]>) {
+    const data = event.container.data;
+
+    const seen = new Set<number>();
+    for (const item of data) {
+      if (seen.has(item.order)) {
+        console.log('DUPLICATI');
+        this.normalizer(data);
+      }
+      seen.add(item.order);
+    }
+  }
+
+  normalizer(tasks: Task[]) {
+    for (let i = 0; i < tasks.length; i++) {
+      tasks[i].order = (i + 1) * 100;
     }
   }
 
@@ -74,10 +137,10 @@ export class DashboardComponent implements OnInit {
     this.firestore.addColumn(newColumn, this.board.id);
   }
 
-  createNewTask(indexTask: number, text: string, idColumn: string) {
+  createNewTask(length: number, text: string, idColumn: string) {
     const newTastk = {
       description: text,
-      order: indexTask + 1,
+      order: (length + 1) * 100,
     };
     this.firestore.addTask(newTastk, this.board.id, idColumn);
   }
