@@ -1,13 +1,8 @@
 .cotenitore {
-  border: 0.5px solid #ffffff24;
 }
-.colonna {
-  width: 18rem;
-  min-height: 5rem;
-  height: fit-content;
-  padding: 0.6rem;
-  border-radius: 0.8rem;
-  box-shadow: 0px 1px 1px #091e4240, 0px 0px 1px #091e424f;
+
+.bg-column {
+  background-color: #ffffff26;
 }
 
 .new-colonna {
@@ -16,14 +11,9 @@
   border-radius: 0.8rem;
 }
 
-.cont-tasks {
-  padding-block: 0.5rem;
-}
-
 .task {
   background-color: #343c42;
   border-radius: 0.5rem;
-  box-shadow: 0px 1px 1px #091e4240, 0px 0px 1px #091e424f;
   cursor: grab;
 }
 

@@ -1,12 +1,10 @@
-<section
-  class="cotenitore w-[90vw] h-[90vh] rounded-2xl bg-gray-600 overflow-hidden"
->
+<section class="cotenitore w-[90vw] h-[90vh]">
   <!-- header bacheca -->
   <div
     *ngIf="board"
-    class="flex items-center justify-between w-full px-5 font-semibold navDash h-14 backdrop-brightness-75"
+    class="flex items-center justify-between w-full font-semibold pe-5 navDash h-14"
   >
-    <h5>{{ board.name }}</h5>
+    <h1 class="text-2xl">{{ board.name }}</h1>
     <div class="flex items-center gap-3.5">
       <button
         class="text-base font-semibold text-gray-800 bg-white border-0 shadow-sm btn btn-sm rounded-[5px] hover:bg-gray-200"
@@ -17,10 +15,10 @@
     </div>
   </div>
   <!-- main bacheca -->
-  <div class="w-full h-full p-3 overflow-scroll">
+  <div class="w-full h-full pt-3 overflow-scroll">
     <ul
       *ngIf="board"
-      class="riga-colonne flex gap-x-3.5 items-start"
+      class="flex items-start h-full riga-colonne gap-x-5"
       cdkDropListGroup
     >
       <!-- colonna standard -->
@@ -30,17 +28,26 @@
           let i = index;
           trackBy: trackByColumnId
         "
-        class="colonna"
-        [ngStyle]="{ 'background-color': sezione.color }"
+        class="colonna min-w-52 w-[19.4rem] h-full"
       >
         <!-- header colonna -->
-        <div class="flex items-center justify-between px-3 py-1 font-semibold">
-          <h6>{{ sezione.name }}</h6>
-          <p>•••</p>
+        <div
+          [ngStyle]="{ 'background-color': sezione.color }"
+          class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg"
+        >
+          <h6 class="text-white">{{ sezione.name }}</h6>
+          <p
+            *ngIf="sezione.id"
+            (click)="
+              createNewTask(sezione.tasks.length, 'Fare qualcosa', sezione.id)
+            "
+          >
+            •••
+          </p>
         </div>
         <!-- body colonna -->
         <ul
-          class="flex flex-col cont-tasks gap-y-2"
+          class="flex flex-col h-full px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4"
           cdkDropList
           *ngIf="sezione.tasks"
           [cdkDropListData]="sezione.tasks"
@@ -54,25 +61,13 @@
             <div class="text-task">{{ item.description }}</div>
           </li>
         </ul>
-        <!-- footer colonna -->
-        <div
-          class="w-full px-3 py-1 font-semibold rounded-md cursor-pointer hover:bg-gray-700"
-        >
-          <h6
-            *ngIf="sezione.id"
-            (click)="createNewTask(sezione.tasks.length, 'siuum', sezione.id)"
-            class="opacity-65"
-          >
-            + Aggiungi Task
-          </h6>
-        </div>
       </li>
 
       <!-- colonna di creazione sezioni -->
       <li class="new-colonna bg-[#ffffff3f] cursor-pointer">
         <!-- header colonna -->
         <div
-          (click)="createNewColumn('ciao', '#fff')"
+          (click)="createNewColumn('new Column', '#fff')"
           class="px-2 pt-0.5 pb-1.5 font-semibold text-white"
         >
           <h6>+ Aggiunvi un'altra lista</h6>
