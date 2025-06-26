@@ -1,21 +1,27 @@
-<section class="cotenitore w-[90vw] h-[90vh]">
+<section class="flex flex-col w-full h-full">
+  <!-- header section -->
+  <div
+    class="flex justify-between w-full px-5 py-3 rounded-2xl backdrop-brightness-75"
+  >
+    <p>not</p>
+    <input type="text" class="input input-sm" placeholder="ciao" />
+    <p>icon isco iscos</p>
+    <button class="btn btn-sm">condividi</button>
+    <p>icon</p>
+    <p>icon</p>
+  </div>
   <!-- header bacheca -->
   <div
     *ngIf="board"
-    class="flex items-center justify-between w-full font-semibold pe-5 navDash h-14"
+    class="flex items-end justify-between w-full mt-4 mb-2 font-semibold pe-5 navDash h-14"
   >
     <h1 class="text-2xl">{{ board.name }}</h1>
     <div class="flex items-center gap-3.5">
-      <button
-        class="text-base font-semibold text-gray-800 bg-white border-0 shadow-sm btn btn-sm rounded-[5px] hover:bg-gray-200"
-      >
-        + Condividi
-      </button>
       <p>•••</p>
     </div>
   </div>
   <!-- main bacheca -->
-  <div class="w-full h-full pt-3 overflow-scroll">
+  <div class="flex-grow pt-3">
     <ul
       *ngIf="board"
       class="flex items-start h-full riga-colonne gap-x-5"
@@ -28,7 +34,7 @@
           let i = index;
           trackBy: trackByColumnId
         "
-        class="colonna min-w-52 w-[19.4rem] h-full"
+        class="min-w-52 w-[19.4rem] h-full"
       >
         <!-- header colonna -->
         <div
@@ -47,7 +53,7 @@
         </div>
         <!-- body colonna -->
         <ul
-          class="flex flex-col h-full px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4"
+          class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4"
           cdkDropList
           *ngIf="sezione.tasks"
           [cdkDropListData]="sezione.tasks"
@@ -64,13 +70,13 @@
       </li>
 
       <!-- colonna di creazione sezioni -->
-      <li class="new-colonna bg-[#ffffff3f] cursor-pointer">
+      <li class="bg-[#ffffff3f] cursor-pointer rounded-lg min-w-52 w-[19.4rem]">
         <!-- header colonna -->
         <div
-          (click)="createNewColumn('new Column', '#fff')"
-          class="px-2 pt-0.5 pb-1.5 font-semibold text-white"
+          class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg"
         >
           <h6>+ Aggiunvi un'altra lista</h6>
+          <p (click)="createNewColumn('new Column', '#fff')">•••</p>
         </div>
       </li>
     </ul>
