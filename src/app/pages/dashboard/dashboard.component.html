@@ -1,7 +1,7 @@
 <section class="flex flex-col w-full h-full">
   <!-- header section -->
   <div
-    class="flex justify-between w-full px-5 py-3 rounded-2xl backdrop-brightness-75"
+    class="flex justify-between items-center w-full h-[4.5rem] px-5 py-3 rounded-2xl backdrop-brightness-75"
   >
     <p>not</p>
     <input type="text" class="input input-sm" placeholder="ciao" />
@@ -15,9 +15,9 @@
     *ngIf="board"
     class="flex items-end justify-between w-full mt-4 mb-2 font-semibold pe-5 navDash h-14"
   >
-    <h1 class="text-2xl">{{ board.name }}</h1>
-    <div class="flex items-center gap-3.5">
-      <p>•••</p>
+    <h1 class="text-4xl font-semibold">{{ board.name }}</h1>
+    <div class="pb-1 border-s-2 ps-5">
+      <p class="text-3xl">•••</p>
     </div>
   </div>
   <!-- main bacheca -->

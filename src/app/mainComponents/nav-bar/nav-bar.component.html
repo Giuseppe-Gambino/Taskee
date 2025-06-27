@@ -1,5 +1,37 @@
-<header class="w-24 h-fit">
-  <nav class="flex flex-col w-20 h-[98vh] bg-white mx rounded-2xl">
-    ssssssss
+<header class="relative z-10 w-24">
+  <nav
+    [ngClass]="navStateClass"
+    class="flex justify-start py-3 h-[98vh] mx rounded-2xl px-[18px] overflow-hidden"
+  >
+    <div class="flex flex-col items-start gap-6">
+      <img
+        (click)="navToggle()"
+        class="cursor-pointer"
+        src="icons8-menu-48.png"
+        alt="home"
+        width="32"
+      />
+      <div class="flex items-center gap-x-6">
+        <img
+          class="cursor-pointer"
+          src="icons8-casa-48.png"
+          alt="home"
+          width="32"
+        />
+        <h4 class="text-xl font-semibold">Home</h4>
+      </div>
+      <div class="flex items-center gap-x-6">
+        <img class="cursor-pointer" src="user.png" alt="profile" width="32" />
+        <h4 class="text-xl font-semibold">Profile</h4>
+      </div>
+      <div class="flex items-center gap-x-6">
+        <img class="cursor-pointer" src="boards.png" alt="Boards" width="32" />
+        <h4 class="text-xl font-semibold">Boards</h4>
+      </div>
+      <div class="flex items-center gap-x-6">
+        <img class="cursor-pointer" src="team.png" alt="friends" width="30" />
+        <h4 class="text-xl font-semibold">friends</h4>
+      </div>
+    </div>
   </nav>
 </header>

@@ -1,0 +1,45 @@
+nav {
+  border: 2px solid rgba(255, 255, 255, 0.556);
+  box-shadow: inset 0px 0px 7px 0px rgba(255, 255, 255, 0.851),
+    inset 0px 0px 20px 0px #3a8ad2;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: 300ms ease-in-out;
+  width: 4.5rem;
+}
+
+.navCollapse {
+  animation: navCol 400ms ease-in-out forwards;
+}
+
+.navExpand {
+  animation: nav 500ms ease-in-out forwards;
+}
+
+@keyframes nav {
+  0% {
+    width: 4.5rem;
+  }
+  80% {
+    width: 13.5rem;
+  }
+  100% {
+    width: 13rem;
+  }
+}
+
+@keyframes navCol {
+  0% {
+    width: 13rem;
+  }
+
+  100% {
+    width: 4.5rem;
+  }
+}
+
+.text-nav {
+  h4 {
+    height: 32px;
+  }
+}
