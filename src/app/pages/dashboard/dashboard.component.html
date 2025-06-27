@@ -1,14 +1,67 @@
 <section class="flex flex-col w-full h-full">
   <!-- header section -->
   <div
-    class="flex justify-between items-center w-full h-[4.5rem] px-5 py-3 rounded-2xl backdrop-brightness-75"
+    class="flex justify-between items-center w-full h-[4rem] px-5 py-3 rounded-2xl backdrop-brightness-75"
   >
-    <p>not</p>
-    <input type="text" class="input input-sm" placeholder="ciao" />
-    <p>icon isco iscos</p>
-    <button class="btn btn-sm">condividi</button>
-    <p>icon</p>
-    <p>icon</p>
+    <div class="flex gap-x-6">
+      <img class="h-8" src="not.png" alt="notification" />
+      <!-- input -->
+      <div
+        class="box-border flex items-center gap-2 px-3 py-[0.35rem] rounded-xl liquid-glass"
+      >
+        <input
+          type="text"
+          class="font-semibold bg-transparent cerca"
+          placeholder="Cerca Task..."
+        />
+        <img src="lente.png" alt="lente di ricerca" width="20" />
+      </div>
+    </div>
+    <div class="flex items-center gap-x-8">
+      <div class="flex items-center gap-x-4">
+        <div class="-space-x-2 avatar-group rtl:space-x-reverse">
+          <div class="avatar">
+            <div class="w-7">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              />
+            </div>
+          </div>
+          <div class="avatar">
+            <div class="w-7">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              />
+            </div>
+          </div>
+          <div class="avatar">
+            <div class="w-7">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              />
+            </div>
+          </div>
+          <div class="avatar">
+            <div class="w-7">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="box-border h-3 py-1 text-base text-white border-0 btn btn-sm btn-active btn-ghost"
+        >
+          <img src="add-user.png" height="20" width="20" />
+          condividi
+        </button>
+      </div>
+      <div class="flex gap-4">
+        <img class="w-[30px] h-[30px]" src="archive.png" alt="archivio" />
+        <img class="w-7 h-7" src="risorse.png" alt="risorse" />
+      </div>
+    </div>
   </div>
   <!-- header bacheca -->
   <div

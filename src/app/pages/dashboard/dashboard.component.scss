@@ -1,6 +1,15 @@
 .bg-column {
   background-color: #ffffff26;
 }
+.cerca {
+  appearance: none;
+  outline: none;
+}
+
+.liquid-glass {
+  box-shadow: inset 0px 0px 4px 0px rgba(255, 255, 255, 0.851),
+    inset 0px 0px 20px 0px #3a8ad2;
+}
 
 .task {
   background-color: #343c42;
@@ -15,4 +24,8 @@
 .text-task {
   padding-block: 0.5rem;
   padding-inline: 0.8rem;
+}
+
+.avatar-group :where(.avatar) {
+  border-color: oklch(0.55 0.12 248.53);
 }
