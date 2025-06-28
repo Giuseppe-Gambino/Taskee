@@ -99,7 +99,9 @@ export class FirestoreService {
           if (!board) return of(undefined);
 
           return this.firestore
-            .collection<Column>(`boards/${idBoard}/columns`)
+            .collection<Column>(`boards/${idBoard}/columns`, (ref) =>
+              ref.orderBy('order')
+            )
             .snapshotChanges()
             .pipe(
               switchMap((columnSnaps) => {

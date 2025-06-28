@@ -54,3 +54,36 @@
   top: 2.4rem;
   z-index: 10;
 }
+
+.header-column:hover .drag-icon {
+  opacity: 1;
+  cursor: grab;
+  transition: 250ms;
+}
+
+.header-column:hover .drag-icon:active {
+  cursor: grabbing;
+}
+
+.header-column {
+  scale: none;
+  transition: 100ms ease-in-out;
+}
+
+.body-column {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  transition: 100ms ease-in-out;
+}
+
+.column-move {
+  .header-column {
+    scale: 0.95;
+  }
+
+  .body-column {
+    margin-top: -3rem;
+    padding-top: 4rem;
+  }
+  transition: 100ms ease-in-out;
+}

@@ -98,11 +98,14 @@
     </div>
   </div>
   <!-- main bacheca -->
-  <div class="flex-grow pt-3">
+  <div cdkDropListGroup class="flex-grow pt-3">
     <ul
       *ngIf="board"
+      cdkDropList
+      [cdkDropListData]="board.columns"
+      (cdkDropListDropped)="dropColumn($event)"
+      [cdkDropListOrientation]="'horizontal'"
       class="flex items-start h-full riga-colonne gap-x-5"
-      cdkDropListGroup
     >
       <!-- colonna standard -->
       <li
@@ -112,20 +115,34 @@
           trackBy: trackByColumnId
         "
         class="min-w-52 w-[19.4rem] h-full"
+        cdkDrag
+        #col
       >
         <!-- header colonna -->
         <div
           [ngStyle]="{ 'background-color': sezione.color }"
-          class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg"
+          class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg header-column"
         >
           <h6 class="text-white">{{ sezione.name }}</h6>
           <div class="flex items-center gap-x-2">
             <img
-              class="w-5 h-4"
+              (mousedown)="grabStart(col)"
+              (mouseup)="grabEnd(col)"
+              (mouseleave)="grabEnd(col)"
+              (drag)="grabEnd(col)"
+              cdkDragHandle
+              class="opacity-0 drag-icon"
+              src="drag.png"
+              alt="icon drag"
+              width="25"
+            />
+            <img
+              class="w-5 h-4 cursor-pointer"
               src="set-column.png"
               alt="icon setting lista"
             />
             <img
+              class="cursor-pointer"
               alt="icon add task"
               src="add-task.png"
               *ngIf="sezione.id"
@@ -137,17 +154,21 @@
         </div>
         <!-- body colonna -->
         <ul
-          class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4"
+          class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column"
+          *ngIf="sezione.tasks && board.columns"
+          [id]="'task-list-' + i"
           cdkDropList
-          *ngIf="sezione.tasks"
           [cdkDropListData]="sezione.tasks"
+          [cdkDropListConnectedTo]="connectedDropListsIds"
           (cdkDropListDropped)="drop($event)"
         >
           <li
             *ngFor="let item of sezione.tasks; trackBy: trackByTaskId"
             class="relative flex h-fit min-h-6 task"
             cdkDrag
+            [cdkDragStartDelay]="25"
           >
+            <!-- ha senso il delay? magari per evitare spostamenti involontari? -->
             <div
               class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
             ></div>
@@ -160,7 +181,7 @@
             <!-- placeholder della task -->
             <ng-template cdkDragPlaceholder>
               <div
-                class="flex h-fit min-h-6 task w-[286.39px] rounded-lg bg-black opacity-20"
+                class="flex h-10 task w-[286.39px] rounded-lg bg-black opacity-20 border-2"
               ></div>
             </ng-template>
 
@@ -173,7 +194,7 @@
                 <div
                   class="w-full px-5 py-2 rounded-lg shadow-md -rotate-6 liquid-glass text"
                 >
-                  <p class="font-semibold">
+                  <p class="font-semibold text-white">
                     {{ item.description }}
                   </p>
                 </div>
@@ -181,6 +202,76 @@
             </ng-template>
           </li>
         </ul>
+        <!-- placeholder column -->
+        <ng-template cdkDragPlaceholder>
+          <div
+            class="min-w-52 w-[19.4rem] h-full bg-black border-2 rounded-lg task opacity-20"
+          ></div>
+        </ng-template>
+        <ng-template cdkDragPreview>
+          <li class="min-w-52 w-[19.4rem] h-full column-move">
+            <!-- header colonna -->
+            <div
+              [ngStyle]="{ 'background-color': sezione.color }"
+              class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg header-column"
+            >
+              <h6 class="text-white">{{ sezione.name }}</h6>
+              <div class="flex items-center gap-x-2">
+                <img
+                  class="opacity-0 drag-icon"
+                  src="drag.png"
+                  alt="icon drag"
+                  width="25"
+                />
+                <img
+                  class="w-5 h-4 cursor-pointer"
+                  src="set-column.png"
+                  alt="icon setting lista"
+                />
+                <img
+                  class="cursor-pointer"
+                  alt="icon add task"
+                  src="add-task.png"
+                />
+              </div>
+            </div>
+            <!-- body colonna -->
+            <ul
+              class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column"
+            >
+              <li class="relative flex h-fit min-h-6 task">
+                <div
+                  class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
+                ></div>
+                <div
+                  class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
+                >
+                  <p class="font-semibold"></p>
+                </div>
+              </li>
+              <li class="relative flex h-fit min-h-6 task">
+                <div
+                  class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
+                ></div>
+                <div
+                  class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
+                >
+                  <p class="font-semibold"></p>
+                </div>
+              </li>
+              <li class="relative flex h-fit min-h-6 task">
+                <div
+                  class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
+                ></div>
+                <div
+                  class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
+                >
+                  <p class="font-semibold"></p>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ng-template>
       </li>
 
       <!-- colonna di creazione sezioni -->

@@ -27,13 +27,28 @@ export class DashboardComponent implements OnInit {
   constructor(private firestore: FirestoreService) {}
   board!: Board;
 
+  grabStart(col: HTMLElement) {
+    col.classList.add('column-move');
+  }
+
+  grabEnd(col: HTMLElement) {
+    col.classList.remove('column-move');
+  }
+
   ngOnInit() {
     this.firestore.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
       if (data) {
         this.board = data;
+
         console.log(data);
       }
     });
+  }
+
+  get connectedDropListsIds(): string[] {
+    return (
+      this.board?.columns?.map((col: any, i: number) => 'task-list-' + i) || []
+    );
   }
 
   // trackBy per il ngfor*
@@ -44,6 +59,14 @@ export class DashboardComponent implements OnInit {
 
   trackByTaskId(index: number, task: Task) {
     return task.id;
+  }
+
+  dropColumn(event: CdkDragDrop<any[]>) {
+    moveItemInArray(
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    );
   }
 
   drop(event: CdkDragDrop<any[]>) {
