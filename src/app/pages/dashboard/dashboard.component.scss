@@ -7,25 +7,50 @@
 }
 
 .liquid-glass {
-  box-shadow: inset 0px 0px 4px 0px rgba(255, 255, 255, 0.851),
+  background-color: #286aa37e;
+  box-shadow: inset 0px 0px 5px 0px rgba(255, 255, 255, 0.851),
     inset 0px 0px 20px 0px #3a8ad2;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
 }
 
-.task {
-  background-color: #343c42;
-  border-radius: 0.5rem;
-  cursor: grab;
+.avatar-group :where(.avatar) {
+  border-color: oklch(0.55 0.12 248.53);
+}
+
+.active-or {
+  background-color: #286aa3;
+  border-radius: 5px;
 }
 
 .task:active {
   cursor: grabbing;
 }
 
-.text-task {
-  padding-block: 0.5rem;
-  padding-inline: 0.8rem;
+.task > .tag {
+  transition: 150ms ease-in-out;
 }
 
-.avatar-group :where(.avatar) {
-  border-color: oklch(0.55 0.12 248.53);
+.task:active > .tag {
+  height: calc(100% - 10px);
+  left: 1.4rem;
+  top: 5px;
+  z-index: 10;
+  transition: 150ms ease-in-out;
+}
+
+.task > .text {
+  transition: 150ms ease-in-out;
+}
+
+.task:active > .text {
+  padding-left: 1.5rem;
+  transition: 150ms ease-in-out;
+}
+
+.drag-a {
+  height: calc(100% - 3rem);
+  left: 1.7rem;
+  top: 2.4rem;
+  z-index: 10;
 }
