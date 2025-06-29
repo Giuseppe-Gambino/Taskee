@@ -19,6 +19,7 @@ import {
 } from 'rxjs';
 import { Board, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { DragElement } from '../interfaces/drag-element';
 
 @Injectable({
   providedIn: 'root',
@@ -76,13 +77,38 @@ export class FirestoreService {
     return this.firestore.collection<Board>('boards').doc(id).update(board);
   }
 
+  updateTask(idBoard: string, idColumn: string, task: Task) {
+    const newTask: Partial<Task> = {
+      description: task.description,
+      order: task.order,
+    };
+
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .doc(task.id)
+      .update(newTask);
+  }
+
+  updateColumn(idBoard: string, column: Column) {
+    const newColumn: Partial<Column> = {
+      name: column.name,
+      color: column.color,
+      order: column.order,
+    };
+
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns`)
+      .doc(column.id)
+      .update(newColumn);
+  }
+
   deleteBoard(id: string) {
     return this.firestore.collection<Board>('boards').doc(id).delete();
   }
 
-  getColumns(boardId: string): Observable<Column[]> {
+  getColumns(idBoard: string): Observable<Column[]> {
     return this.firestore
-      .collection(`boards/${boardId}/columns`)
+      .collection(`boards/${idBoard}/columns`)
       .snapshotChanges()
       .pipe(
         map((actions) =>

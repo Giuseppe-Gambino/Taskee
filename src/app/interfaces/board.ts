@@ -9,6 +9,7 @@ export interface Column {
   id?: string;
   name: string;
   color: string;
+  order: number;
   tasks: Task[];
 }
 

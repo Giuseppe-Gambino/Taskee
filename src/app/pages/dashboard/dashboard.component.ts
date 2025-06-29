@@ -69,16 +69,17 @@ export class DashboardComponent implements OnInit {
       event.currentIndex
     );
     if (event.currentIndex !== event.previousIndex) {
-      this.setNewOrderForElementBetween2(event);
+      this.setNewOrderForElementBetween2(event, '');
     } else {
       console.log('non si e spostato');
     }
-    this.chackDuplicates(event);
+
+    this.chackDuplicates(event, '');
 
     console.log('array finale cambio', event.container.data);
   }
 
-  drop(event: CdkDragDrop<any[]>) {
+  drop(event: CdkDragDrop<any[]>, idColumn: string) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -87,12 +88,12 @@ export class DashboardComponent implements OnInit {
       );
 
       if (event.currentIndex !== event.previousIndex) {
-        this.setNewOrderForElementBetween2(event);
+        this.setNewOrderForElementBetween2(event, idColumn);
       } else {
         console.log('non si e spostato');
       }
 
-      this.chackDuplicates(event);
+      this.chackDuplicates(event, idColumn);
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -102,16 +103,17 @@ export class DashboardComponent implements OnInit {
       );
 
       if (event.container.data.length !== 1) {
-        this.setNewOrderForElementBetween2(event);
+        this.setNewOrderForElementBetween2(event, idColumn);
       }
 
-      this.chackDuplicates(event);
+      this.chackDuplicates(event, idColumn);
     }
     console.log('array finale cambio', event.container.data);
   }
 
-  setNewOrderForElementBetween2(event: CdkDragDrop<any[]>) {
-    const element: DragElement = event.container.data[event.currentIndex];
+  setNewOrderForElementBetween2(event: CdkDragDrop<any[]>, idColumn: string) {
+    const element: Task | Column = event.container.data[event.currentIndex];
+
     console.log(element);
 
     let indexElementTop: number;
@@ -126,6 +128,8 @@ export class DashboardComponent implements OnInit {
         event.container.data[indexElementTop].order + 100
       );
 
+      this.updateElement(element, idColumn);
+
       return;
     } else if (event.currentIndex - 1 < 0) {
       console.log('elemento spostato nella prima posizione');
@@ -135,6 +139,8 @@ export class DashboardComponent implements OnInit {
       element.order = Math.floor(
         event.container.data[indexElementBottom].order / 2
       );
+
+      this.updateElement(element, idColumn);
 
       return;
     } else {
@@ -146,24 +152,27 @@ export class DashboardComponent implements OnInit {
     const elementBottom = event.container.data[indexElementBottom].order;
 
     element.order = Math.floor((elementTop + elementBottom) / 2);
+
+    this.updateElement(element, idColumn);
   }
 
-  chackDuplicates(event: CdkDragDrop<any[]>) {
+  chackDuplicates(event: CdkDragDrop<any[]>, idColum: string) {
     const data = event.container.data;
 
     const seen = new Set<number>();
     for (const item of data) {
       if (seen.has(item.order)) {
         console.log('DUPLICATI');
-        this.normalizer(data);
+        this.normalizer(data, idColum);
       }
       seen.add(item.order);
     }
   }
 
-  normalizer(element: DragElement[]) {
+  normalizer(element: Task[] | Column[], idColumn: string) {
     for (let i = 0; i < element.length; i++) {
       element[i].order = (i + 1) * 100;
+      this.updateElement(element[i], idColumn);
     }
   }
 
@@ -185,40 +194,18 @@ export class DashboardComponent implements OnInit {
     this.firestore.addTask(newTastk, this.board.id, idColumn);
   }
 
-  //  setNewOrderForListBetween2(event: CdkDragDrop<any[]>) {
-  //   const column: Column = event.container.data[event.currentIndex];
+  isColumn(el: Task | Column): el is Column {
+    return 'name' in el && 'order' in el;
+  }
 
-  //   let indexElementTop: number;
-  //   let indexElementBottom: number;
-
-  //   if (event.container.data.length === event.currentIndex + 1) {
-  //     console.log('elemento spostato nell ultima posizione');
-
-  //     indexElementTop = event.currentIndex - 1;
-
-  //     column.order = Math.floor(
-  //       event.container.data[indexElementTop].order + 100
-  //     );
-
-  //     return;
-  //   } else if (event.currentIndex - 1 < 0) {
-  //     console.log('elemento spostato nella prima posizione');
-
-  //     indexElementBottom = event.currentIndex + 1;
-
-  //     column.order = Math.floor(
-  //       event.container.data[indexElementBottom].order / 2
-  //     );
-
-  //     return;
-  //   } else {
-  //     indexElementTop = event.currentIndex - 1;
-  //     indexElementBottom = event.currentIndex + 1;
-  //   }
-
-  //   const elementTop = event.container.data[indexElementTop].order;
-  //   const elementBottom = event.container.data[indexElementBottom].order;
-
-  //   column.order = Math.floor((elementTop + elementBottom) / 2);
-  // }
+  updateElement(element: Task | Column, idColumn: string) {
+    if (!element.id) return;
+    if (this.isColumn(element)) {
+      console.log('sono una collumn');
+      this.firestore.updateColumn(this.board.id, element);
+    } else {
+      console.log('non sono una column');
+      this.firestore.updateTask(this.board.id, idColumn, element);
+    }
+  }
 }
