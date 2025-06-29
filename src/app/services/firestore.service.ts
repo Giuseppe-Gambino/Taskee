@@ -17,7 +17,7 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { Board, Column, Task } from '../iterfaces/board';
+import { Board, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Injectable({
@@ -30,9 +30,14 @@ export class FirestoreService {
     return this.firestore.collection<Board>('boards').add(board);
   }
 
-  addColumn(newColumn: Column, idBoard: string) {
+  addColumn(
+    newColumn: { name: string; color: string; order: number },
+    idBoard: string
+  ) {
     return this.firestore
-      .collection<Column>(`boards/${idBoard}/columns`)
+      .collection<{ name: string; color: string; order: number }>(
+        `boards/${idBoard}/columns`
+      )
       .add(newColumn);
   }
 

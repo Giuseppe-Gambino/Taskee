@@ -14,9 +14,10 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Board, Column, Task } from '../../iterfaces/board';
+import { Board, Column, Task } from '../../interfaces/board';
 import { FirestoreService } from '../../services/firestore.service';
 import { Observable } from 'rxjs';
+import { DragElement } from '../../interfaces/drag-element';
 
 @Component({
   selector: 'app-dashboard',
@@ -67,6 +68,14 @@ export class DashboardComponent implements OnInit {
       event.previousIndex,
       event.currentIndex
     );
+    if (event.currentIndex !== event.previousIndex) {
+      this.setNewOrderForElementBetween2(event);
+    } else {
+      console.log('non si e spostato');
+    }
+    this.chackDuplicates(event);
+
+    console.log('array finale cambio', event.container.data);
   }
 
   drop(event: CdkDragDrop<any[]>) {
@@ -84,8 +93,6 @@ export class DashboardComponent implements OnInit {
       }
 
       this.chackDuplicates(event);
-
-      // console.log('array finale', event.container.data);
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -98,13 +105,14 @@ export class DashboardComponent implements OnInit {
         this.setNewOrderForElementBetween2(event);
       }
 
-      console.log('array finale cambio', event.container.data);
       this.chackDuplicates(event);
     }
+    console.log('array finale cambio', event.container.data);
   }
 
   setNewOrderForElementBetween2(event: CdkDragDrop<any[]>) {
-    const task: Task = event.container.data[event.currentIndex];
+    const element: DragElement = event.container.data[event.currentIndex];
+    console.log(element);
 
     let indexElementTop: number;
     let indexElementBottom: number;
@@ -114,7 +122,7 @@ export class DashboardComponent implements OnInit {
 
       indexElementTop = event.currentIndex - 1;
 
-      task.order = Math.floor(
+      element.order = Math.floor(
         event.container.data[indexElementTop].order + 100
       );
 
@@ -124,7 +132,7 @@ export class DashboardComponent implements OnInit {
 
       indexElementBottom = event.currentIndex + 1;
 
-      task.order = Math.floor(
+      element.order = Math.floor(
         event.container.data[indexElementBottom].order / 2
       );
 
@@ -137,7 +145,7 @@ export class DashboardComponent implements OnInit {
     const elementTop = event.container.data[indexElementTop].order;
     const elementBottom = event.container.data[indexElementBottom].order;
 
-    task.order = Math.floor((elementTop + elementBottom) / 2);
+    element.order = Math.floor((elementTop + elementBottom) / 2);
   }
 
   chackDuplicates(event: CdkDragDrop<any[]>) {
@@ -153,17 +161,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  normalizer(tasks: Task[]) {
-    for (let i = 0; i < tasks.length; i++) {
-      tasks[i].order = (i + 1) * 100;
+  normalizer(element: DragElement[]) {
+    for (let i = 0; i < element.length; i++) {
+      element[i].order = (i + 1) * 100;
     }
   }
 
   createNewColumn(name: string, color: string) {
-    const newColumn: Column = {
+    const newColumn = {
       name,
       color,
-      tasks: [],
+      order: (this.board.columns.length + 1) * 100,
     };
 
     this.firestore.addColumn(newColumn, this.board.id);
@@ -176,4 +184,41 @@ export class DashboardComponent implements OnInit {
     };
     this.firestore.addTask(newTastk, this.board.id, idColumn);
   }
+
+  //  setNewOrderForListBetween2(event: CdkDragDrop<any[]>) {
+  //   const column: Column = event.container.data[event.currentIndex];
+
+  //   let indexElementTop: number;
+  //   let indexElementBottom: number;
+
+  //   if (event.container.data.length === event.currentIndex + 1) {
+  //     console.log('elemento spostato nell ultima posizione');
+
+  //     indexElementTop = event.currentIndex - 1;
+
+  //     column.order = Math.floor(
+  //       event.container.data[indexElementTop].order + 100
+  //     );
+
+  //     return;
+  //   } else if (event.currentIndex - 1 < 0) {
+  //     console.log('elemento spostato nella prima posizione');
+
+  //     indexElementBottom = event.currentIndex + 1;
+
+  //     column.order = Math.floor(
+  //       event.container.data[indexElementBottom].order / 2
+  //     );
+
+  //     return;
+  //   } else {
+  //     indexElementTop = event.currentIndex - 1;
+  //     indexElementBottom = event.currentIndex + 1;
+  //   }
+
+  //   const elementTop = event.container.data[indexElementTop].order;
+  //   const elementBottom = event.container.data[indexElementBottom].order;
+
+  //   column.order = Math.floor((elementTop + elementBottom) / 2);
+  // }
 }
