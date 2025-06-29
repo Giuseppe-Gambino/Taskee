@@ -28,7 +28,7 @@
 }
 
 .task > .tag {
-  transition: 150ms ease-in-out;
+  transition: 150ms ease-out;
 }
 
 .task:active > .tag {
@@ -36,16 +36,16 @@
   left: 1.4rem;
   top: 5px;
   z-index: 10;
-  transition: 150ms ease-in-out;
+  transition: 150ms ease-out;
 }
 
 .task > .text {
-  transition: 150ms ease-in-out;
+  transition: 150ms ease-out;
 }
 
 .task:active > .text {
   padding-left: 1.5rem;
-  transition: 150ms ease-in-out;
+  transition: 150ms ease-out;
 }
 
 .drag-a {
@@ -67,13 +67,13 @@
 
 .header-column {
   scale: none;
-  transition: 100ms ease-in-out;
+  transition: 100ms linear;
 }
 
 .body-column {
   margin-top: 1rem;
   padding-top: 1rem;
-  transition: 100ms ease-in-out;
+  transition: 100ms linear;
 }
 
 .column-move {
@@ -85,5 +85,27 @@
     margin-top: -3rem;
     padding-top: 4rem;
   }
-  transition: 100ms ease-in-out;
+  transition: 100ms linear;
+}
+
+.column-preview {
+  .header-column {
+    scale: 0.95;
+    width: calc(100% - 0.8rem);
+  }
+
+  .body-column {
+    margin-top: -3.4rem;
+    padding-top: 4rem;
+    border-radius: 15px;
+  }
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.list-drag-animation.cdk-drop-list-dragging
+  .item-drag-animation:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

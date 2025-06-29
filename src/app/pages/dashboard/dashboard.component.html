@@ -105,7 +105,7 @@
       [cdkDropListData]="board.columns"
       (cdkDropListDropped)="dropColumn($event)"
       [cdkDropListOrientation]="'horizontal'"
-      class="flex items-start h-full riga-colonne gap-x-5"
+      class="flex items-start h-full riga-colonne gap-x-5 list-drag-animation"
     >
       <!-- colonna standard -->
       <li
@@ -114,7 +114,7 @@
           let i = index;
           trackBy: trackByColumnId
         "
-        class="min-w-52 w-[19.4rem] h-full"
+        class="min-w-52 w-[19.4rem] h-full item-drag-animation"
         cdkDrag
         #col
       >
@@ -126,11 +126,10 @@
           <h6 class="text-white">{{ sezione.name }}</h6>
           <div class="flex items-center gap-x-2">
             <img
+              cdkDragHandle
               (mousedown)="grabStart(col)"
               (mouseup)="grabEnd(col)"
               (mouseleave)="grabEnd(col)"
-              (drag)="grabEnd(col)"
-              cdkDragHandle
               class="opacity-0 drag-icon"
               src="drag.png"
               alt="icon drag"
@@ -154,7 +153,7 @@
         </div>
         <!-- body colonna -->
         <ul
-          class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column"
+          class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column list-drag-animation"
           *ngIf="sezione.tasks && board.columns"
           [id]="'task-list-' + i"
           cdkDropList
@@ -164,7 +163,7 @@
         >
           <li
             *ngFor="let item of sezione.tasks; trackBy: trackByTaskId"
-            class="relative flex h-fit min-h-6 task"
+            class="relative flex h-fit min-h-6 task item-drag-animation"
             cdkDrag
             [cdkDragStartDelay]="25"
           >
@@ -209,20 +208,16 @@
           ></div>
         </ng-template>
         <ng-template cdkDragPreview>
-          <li class="min-w-52 w-[19.4rem] h-full column-move">
+          <li
+            class="min-w-56 w-[21rem] h-fit max-h-[40rem] overflow-hidden column-preview -rotate-3 px-10"
+          >
             <!-- header colonna -->
             <div
               [ngStyle]="{ 'background-color': sezione.color }"
-              class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg header-column"
+              class="flex items-center justify-between px-3 py-2 font-semibold rounded-lg header-column -rotate-3"
             >
               <h6 class="text-white">{{ sezione.name }}</h6>
               <div class="flex items-center gap-x-2">
-                <img
-                  class="opacity-0 drag-icon"
-                  src="drag.png"
-                  alt="icon drag"
-                  width="25"
-                />
                 <img
                   class="w-5 h-4 cursor-pointer"
                   src="set-column.png"
@@ -237,36 +232,22 @@
             </div>
             <!-- body colonna -->
             <ul
-              class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column"
+              class="flex flex-col h-[92.55%] min-w-56 px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column -rotate-3"
             >
-              <li class="relative flex h-fit min-h-6 task">
+              <li
+                *ngFor="
+                  let item of sezione.tasks | slice : 0 : 5;
+                  trackBy: trackByTaskId
+                "
+                class="relative flex h-fit min-h-6"
+              >
                 <div
                   class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
                 ></div>
                 <div
                   class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
                 >
-                  <p class="font-semibold"></p>
-                </div>
-              </li>
-              <li class="relative flex h-fit min-h-6 task">
-                <div
-                  class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
-                ></div>
-                <div
-                  class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
-                >
-                  <p class="font-semibold"></p>
-                </div>
-              </li>
-              <li class="relative flex h-fit min-h-6 task">
-                <div
-                  class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
-                ></div>
-                <div
-                  class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
-                >
-                  <p class="font-semibold"></p>
+                  <p class="font-semibold">{{ item.description }}</p>
                 </div>
               </li>
             </ul>
