@@ -16,8 +16,6 @@ import {
 } from '@angular/cdk/drag-drop';
 import { Board, Column, Task } from '../../interfaces/board';
 import { FirestoreService } from '../../services/firestore.service';
-import { Observable } from 'rxjs';
-import { DragElement } from '../../interfaces/drag-element';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,33 +24,26 @@ import { DragElement } from '../../interfaces/drag-element';
 })
 export class DashboardComponent implements OnInit {
   constructor(private firestore: FirestoreService) {}
+
+  userBoard: string = 'hFOcPrZR9gzg6GoQMO4Y';
+
   board!: Board;
-
-  grabStart(col: HTMLElement) {
-    col.classList.add('column-move');
-  }
-
-  grabEnd(col: HTMLElement) {
-    col.classList.remove('column-move');
-  }
 
   ngOnInit() {
     this.firestore.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
       if (data) {
         this.board = data;
-
         console.log(data);
       }
     });
   }
 
+  // costruisce un array di id column per andare ad assegnare il collegamento delle list per il drag-n-drop (per dire alle liste quali elementi possono ricevere in base alla lista di provenienza)
   get connectedDropListsIds(): string[] {
-    return (
-      this.board?.columns?.map((col: any, i: number) => 'task-list-' + i) || []
-    );
+    return this.board.columns?.map((col: any, i: number) => col.id) || [];
   }
 
-  // trackBy per il ngfor*
+  // trackBy per il ngfor*  permette di non aggiornare l'intero ngfor ma solo l'elemento
 
   trackByColumnId(index: number, column: Column) {
     return column.id;
@@ -62,24 +53,27 @@ export class DashboardComponent implements OnInit {
     return task.id;
   }
 
+  // prende la column droppata e modifica l'ordine
   dropColumn(event: CdkDragDrop<any[]>) {
     moveItemInArray(
       event.container.data,
       event.previousIndex,
       event.currentIndex
     );
+    // controlla se la column si è spostata e l'aggiorna se serve
     if (event.currentIndex !== event.previousIndex) {
       this.setNewOrderForElementBetween2(event, '');
-    } else {
-      console.log('non si e spostato');
+      this.checkDuplicates(event, '');
     }
-
-    this.chackDuplicates(event, '');
-
-    console.log('array finale cambio', event.container.data);
   }
 
-  drop(event: CdkDragDrop<any[]>, idColumn: string) {
+  // prende la task droppata e modifica l'ordine e/o la column
+  drop(event: CdkDragDrop<any[]>) {
+    // id delle column
+    const idColumn: string = event.container.id;
+    const idColumnPre: string = event.previousContainer.id;
+
+    // if che capisce se deve muovere una task dentro l'array o deve trasferirla di array
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -87,13 +81,12 @@ export class DashboardComponent implements OnInit {
         event.currentIndex
       );
 
+      // if che controlla se la task si è spostata
       if (event.currentIndex !== event.previousIndex) {
         this.setNewOrderForElementBetween2(event, idColumn);
-      } else {
-        console.log('non si e spostato');
+        // controlla se ci sono task con order uguali
+        this.checkDuplicates(event, idColumn);
       }
-
-      this.chackDuplicates(event, idColumn);
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -102,26 +95,37 @@ export class DashboardComponent implements OnInit {
         event.currentIndex
       );
 
+      // if che controlla se il nuovo array ha task all'interno, e quindi se aggiornare l'order o no
       if (event.container.data.length !== 1) {
-        this.setNewOrderForElementBetween2(event, idColumn);
+        this.setNewOrderForElementBetween2(event, idColumnPre);
       }
 
-      this.chackDuplicates(event, idColumn);
+      const task: Task = event.container.data[event.currentIndex];
+
+      // trasferisce la task
+      this.transferTask(task, idColumn, idColumnPre);
+
+      this.checkDuplicates(event, idColumn);
     }
-    console.log('array finale cambio', event.container.data);
   }
 
+  // trasferisce la task da una collection all'altra facendo una delete e create
+  transferTask(task: Task, idColumn: string, idColumnPre: string) {
+    if (!task.id) return;
+    this.firestore.deleteTask(this.board.id, idColumnPre, task.id);
+    this.firestore.addTask(task, this.board.id, idColumn);
+  }
+
+  // funzione che gestisce/aggiorna l'ordinamento delle task
   setNewOrderForElementBetween2(event: CdkDragDrop<any[]>, idColumn: string) {
     const element: Task | Column = event.container.data[event.currentIndex];
 
-    console.log(element);
-
+    // index degli elementi per capire quale slot assegnare alla task spostata
     let indexElementTop: number;
     let indexElementBottom: number;
 
+    // se la task è stata messa in fondo, questa prende l'order della penultima e aggiunge 100
     if (event.container.data.length === event.currentIndex + 1) {
-      console.log('elemento spostato nell ultima posizione');
-
       indexElementTop = event.currentIndex - 1;
 
       element.order = Math.floor(
@@ -131,9 +135,9 @@ export class DashboardComponent implements OnInit {
       this.updateElement(element, idColumn);
 
       return;
-    } else if (event.currentIndex - 1 < 0) {
-      console.log('elemento spostato nella prima posizione');
 
+      // se la task è stata messa in prima posizione, questa prende l'order della seconda e divide per 100
+    } else if (event.currentIndex - 1 < 0) {
       indexElementBottom = event.currentIndex + 1;
 
       element.order = Math.floor(
@@ -143,6 +147,8 @@ export class DashboardComponent implements OnInit {
       this.updateElement(element, idColumn);
 
       return;
+
+      // altrimenti prende l'order dalla somma divisa per 2, della task sotto e sopra di essa
     } else {
       indexElementTop = event.currentIndex - 1;
       indexElementBottom = event.currentIndex + 1;
@@ -153,22 +159,25 @@ export class DashboardComponent implements OnInit {
 
     element.order = Math.floor((elementTop + elementBottom) / 2);
 
+    // fa l'update delle task
     this.updateElement(element, idColumn);
+
+    console.log(event.container.data);
   }
 
-  chackDuplicates(event: CdkDragDrop<any[]>, idColum: string) {
+  // controlla se ci sono task con order uguali
+  checkDuplicates(event: CdkDragDrop<any[]>, idColum: string) {
     const data = event.container.data;
 
     const seen = new Set<number>();
     for (const item of data) {
       if (seen.has(item.order)) {
-        console.log('DUPLICATI');
         this.normalizer(data, idColum);
       }
       seen.add(item.order);
     }
   }
-
+  //  in caso di duplicati li normalizza, andando ad assegnare gli order in base all'(index + 1) * 100
   normalizer(element: Task[] | Column[], idColumn: string) {
     for (let i = 0; i < element.length; i++) {
       element[i].order = (i + 1) * 100;
@@ -198,14 +207,22 @@ export class DashboardComponent implements OnInit {
     return 'name' in el && 'order' in el;
   }
 
+  // controlla se l'elemento droppato è una task o una column e usa il metodo corrispondente
   updateElement(element: Task | Column, idColumn: string) {
     if (!element.id) return;
     if (this.isColumn(element)) {
-      console.log('sono una collumn');
       this.firestore.updateColumn(this.board.id, element);
     } else {
-      console.log('non sono una column');
       this.firestore.updateTask(this.board.id, idColumn, element);
     }
+  }
+
+  // animazione per singola column
+  grabStart(col: HTMLElement) {
+    col.classList.add('column-move');
+  }
+
+  grabEnd(col: HTMLElement) {
+    col.classList.remove('column-move');
   }
 }

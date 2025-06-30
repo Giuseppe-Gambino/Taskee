@@ -156,11 +156,11 @@
         <ul
           class="flex flex-col h-[92.55%] px-3 py-4 my-4 rounded-lg bg-column cont-tasks gap-y-4 body-column list-drag-animation"
           *ngIf="sezione.tasks && board.columns && sezione.id"
-          [id]="'task-list-' + i"
+          [id]="sezione.id"
           cdkDropList
           [cdkDropListData]="sezione.tasks"
           [cdkDropListConnectedTo]="connectedDropListsIds"
-          (cdkDropListDropped)="drop($event, sezione.id)"
+          (cdkDropListDropped)="drop($event)"
         >
           <li
             *ngFor="let item of sezione.tasks; trackBy: trackByTaskId"

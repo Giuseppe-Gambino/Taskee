@@ -19,7 +19,6 @@ import {
 } from 'rxjs';
 import { Board, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { DragElement } from '../interfaces/drag-element';
 
 @Injectable({
   providedIn: 'root',
@@ -27,9 +26,34 @@ import { DragElement } from '../interfaces/drag-element';
 export class FirestoreService {
   constructor(private firestore: AngularFirestore) {}
 
+  // board ----------------------------------------------
+
   addBoard(board: Board) {
     return this.firestore.collection<Board>('boards').add(board);
   }
+
+  getBoards(): Observable<Board[]> {
+    return this.firestore
+      .collection<Board>('boards')
+      .valueChanges({ idField: 'id' });
+  }
+
+  getBoardByid(id: string): Observable<Board | undefined> {
+    return this.firestore
+      .collection<Board>('boards')
+      .doc(id)
+      .valueChanges({ idField: 'id' });
+  }
+
+  updateBoard(id: string, board: Partial<Board>) {
+    return this.firestore.collection<Board>('boards').doc(id).update(board);
+  }
+
+  deleteBoard(id: string) {
+    return this.firestore.collection<Board>('boards').doc(id).delete();
+  }
+
+  // column -------------------------------------------
 
   addColumn(
     newColumn: { name: string; color: string; order: number },
@@ -42,53 +66,6 @@ export class FirestoreService {
       .add(newColumn);
   }
 
-  addTask(newTask: Task, idBoard: string, idColumn: string) {
-    return this.firestore
-      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
-      .add(newTask);
-  }
-
-  getBoards(): Observable<Board[]> {
-    return this.firestore
-      .collection<Board>('boards')
-      .valueChanges({ idField: 'id' });
-  }
-
-  getBoardByid(id: string): Observable<Board | undefined> {
-    return this.firestore.collection<Board>('boards').doc(id).valueChanges();
-  }
-
-  getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {
-    return this.firestore
-      .collection<Column>(`boards/${idBoard}/columns`)
-      .valueChanges({ idField: 'id' });
-  }
-
-  getTasksByBoardIdAndColumnId(
-    idBoard: string,
-    idColumn: string
-  ): Observable<Task[]> {
-    return this.firestore
-      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
-      .valueChanges();
-  }
-
-  updateBoard(id: string, board: Partial<Board>) {
-    return this.firestore.collection<Board>('boards').doc(id).update(board);
-  }
-
-  updateTask(idBoard: string, idColumn: string, task: Task) {
-    const newTask: Partial<Task> = {
-      description: task.description,
-      order: task.order,
-    };
-
-    return this.firestore
-      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
-      .doc(task.id)
-      .update(newTask);
-  }
-
   updateColumn(idBoard: string, column: Column) {
     const newColumn: Partial<Column> = {
       name: column.name,
@@ -97,29 +74,65 @@ export class FirestoreService {
     };
 
     return this.firestore
-      .collection<Task>(`boards/${idBoard}/columns`)
+      .collection<Column>(`boards/${idBoard}/columns`)
       .doc(column.id)
       .update(newColumn);
   }
 
-  deleteBoard(id: string) {
-    return this.firestore.collection<Board>('boards').doc(id).delete();
+  getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {
+    return this.firestore
+      .collection<Column>(`boards/${idBoard}/columns`, (ref) =>
+        ref.orderBy('order')
+      )
+      .valueChanges({ idField: 'id' });
   }
 
-  getColumns(idBoard: string): Observable<Column[]> {
+  // task -------------------------------------------------
+
+  addTask(task: Task, idBoard: string, idColumn: string) {
+    const newTask: Partial<Task> = {
+      description: task.description,
+      order: task.order,
+    };
+
     return this.firestore
-      .collection(`boards/${idBoard}/columns`)
-      .snapshotChanges()
-      .pipe(
-        map((actions) =>
-          actions.map((a) => {
-            const data = a.payload.doc.data() as Column;
-            const id = a.payload.doc.id;
-            return data;
-          })
-        )
-      );
+      .collection<Partial<Task>>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .add(newTask);
   }
+
+  updateTask(idBoard: string, idColumn: string, task: Task) {
+    const newTask: Partial<Task> = {
+      description: task.description,
+      order: task.order,
+    };
+
+    console.log('aggiorno task');
+
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .doc(task.id)
+      .update(newTask);
+  }
+
+  deleteTask(idBoard: string, idColumn: string, idTask: string) {
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
+      .doc(idTask)
+      .delete();
+  }
+
+  getTasksByBoardIdAndColumnId(
+    idBoard: string,
+    idColumn: string
+  ): Observable<Task[]> {
+    return this.firestore
+      .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`, (ref) =>
+        ref.orderBy('order')
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  // get full board ----------------------------------------------
 
   getFullBoard(idBoard: string): Observable<Board | undefined> {
     return this.firestore
