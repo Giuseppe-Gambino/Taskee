@@ -48,6 +48,9 @@
   transition: 150ms ease-out;
 }
 
+.deleteTask:hover > img {
+  opacity: 1;
+}
 .drag-a {
   height: calc(100% - 3rem);
   left: 1.7rem;

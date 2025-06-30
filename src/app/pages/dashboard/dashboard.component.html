@@ -146,10 +146,37 @@
               alt="icon add task"
               src="add-task.png"
               *ngIf="sezione.id"
-              (click)="
-                createNewTask(sezione.tasks.length, 'Fare qualcosa', sezione.id)
-              "
+              (click)="modal.showModal()"
             />
+            <!-- Open the modal using ID.showModal() method -->
+            <dialog #modal class="modal">
+              <div *ngIf="sezione.id" class="modal-box liquid-glass">
+                <h3 class="text-xl font-bold">Descrizione</h3>
+                <input
+                  [(ngModel)]="description"
+                  type="text"
+                  class="w-full p-3 mt-3 outline-none rounded-xl bg-slate-800 opacity-80"
+                />
+                <div class="modal-action">
+                  <form method="dialog" class="flex gap-x-3">
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button
+                      (click)="clearInput()"
+                      class="box-border h-3 py-1 text-base text-white border-0 outline-none hover:opacity-75 btn btn-sm btn-active btn-ghost"
+                    >
+                      Annulla
+                    </button>
+                    <button
+                      [disabled]="!description"
+                      (click)="createNewTask(sezione.tasks.length, sezione.id)"
+                      class="px-3 py-1 text-white bg-teal-600 border-none hover:opacity-75 btn btn-sm"
+                    >
+                      Salva
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
           </div>
         </div>
         <!-- body colonna -->
@@ -173,9 +200,16 @@
               class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
             ></div>
             <div
-              class="w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text"
+              class="relative w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text deleteTask"
             >
               <p class="font-semibold">{{ item.description }}</p>
+              <img
+                *ngIf="item.id"
+                (click)="deleteTask(sezione.id, item.id)"
+                src="cestino.png"
+                alt="elimina"
+                class="absolute top-0 right-0 w-4 h-4 m-2 opacity-0 cursor-pointer deleteTask"
+              />
             </div>
 
             <!-- placeholder della task -->
@@ -260,12 +294,50 @@
       <li class="bg-[#ffffff3f] cursor-pointer rounded-lg w-[13rem]">
         <!-- header colonna -->
         <div
-          (click)="createNewColumn('new Column', '#fff')"
+          (click)="modal.showModal()"
           class="flex justify-center px-3 py-2 font-semibold rounded-lg gap-x-6"
         >
           <h6>Aggiungi un lista</h6>
           <img src="add-column.png" alt="icon add list" width="25" />
         </div>
+        <dialog #modal class="modal">
+          <div class="modal-box liquid-glass">
+            <div class="mb-3">
+              <h3 class="text-xl font-bold">Titolo</h3>
+              <input
+                [(ngModel)]="nameColumn"
+                type="text"
+                class="w-full p-3 mt-3 outline-none rounded-xl bg-slate-800 opacity-80"
+              />
+            </div>
+            <div>
+              <h3 class="text-xl font-bold">Colore</h3>
+              <input
+                [(ngModel)]="colorColumn"
+                type="color"
+                class="h-12 w-[20%] p-2 mt-3 outline-none rounded-xl bg-slate-800 opacity-80"
+              />
+            </div>
+            <div class="modal-action">
+              <form method="dialog" class="flex gap-x-3">
+                <!-- if there is a button in form, it will close the modal -->
+                <button
+                  (click)="clearInput()"
+                  class="box-border h-3 py-1 text-base text-white border-0 outline-none hover:opacity-75 btn btn-sm btn-active btn-ghost"
+                >
+                  Annulla
+                </button>
+                <button
+                  (click)="createNewColumn()"
+                  [disabled]="!nameColumn"
+                  class="px-3 py-1 text-white bg-teal-600 border-none hover:opacity-75 btn btn-sm"
+                >
+                  Salva
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
       </li>
     </ul>
   </div>

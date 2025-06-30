@@ -185,22 +185,41 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  createNewColumn(name: string, color: string) {
+  nameColumn: string | null = null;
+  colorColumn: string = '#212121';
+
+  createNewColumn() {
+    if (!this.nameColumn) return;
     const newColumn = {
-      name,
-      color,
+      name: this.nameColumn,
+      color: this.colorColumn,
       order: (this.board.columns.length + 1) * 100,
     };
 
     this.firestore.addColumn(newColumn, this.board.id);
   }
 
-  createNewTask(length: number, text: string, idColumn: string) {
+  description: string | null = null;
+
+  createNewTask(length: number, idColumn: string) {
+    if (!this.description) return;
     const newTastk = {
-      description: text,
+      description: this.description,
       order: (length + 1) * 100,
     };
+
     this.firestore.addTask(newTastk, this.board.id, idColumn);
+    this.clearInput();
+  }
+
+  clearInput() {
+    this.description = null;
+    this.nameColumn = null;
+    this.colorColumn = '#212121';
+  }
+
+  deleteTask(idColumn: string, idTask: string) {
+    this.firestore.deleteTask(this.userBoard, idColumn, idTask);
   }
 
   isColumn(el: Task | Column): el is Column {
