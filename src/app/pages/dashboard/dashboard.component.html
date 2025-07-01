@@ -191,25 +191,26 @@
         >
           <li
             *ngFor="let item of sezione.tasks; trackBy: trackByTaskId"
-            class="relative flex h-fit min-h-6 task item-drag-animation"
+            class="item-drag-animation"
             cdkDrag
             [cdkDragStartDelay]="25"
           >
-            <!-- ha senso il delay? magari per evitare spostamenti involontari? -->
-            <div
-              class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
-            ></div>
-            <div
-              class="relative w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text deleteTask"
-            >
-              <p class="font-semibold">{{ item.description }}</p>
-              <img
-                *ngIf="item.id"
-                (click)="deleteTask(sezione.id, item.id)"
-                src="cestino.png"
-                alt="elimina"
-                class="absolute top-0 right-0 w-4 h-4 m-2 opacity-0 cursor-pointer deleteTask"
-              />
+            <div class="relative flex h-fit min-h-6 task">
+              <div
+                class="w-2 h-full rounded-full shadow-md bg-[#2CA7FF] absolute left-0 top-0 tag"
+              ></div>
+              <div
+                class="relative w-full px-3 py-2 rounded-lg shadow-md liquid-glass ms-4 text deleteTask"
+              >
+                <p class="font-semibold">{{ item.description }}</p>
+                <img
+                  *ngIf="item.id"
+                  (click)="deleteTask(sezione.id, item.id)"
+                  src="cestino.png"
+                  alt="elimina"
+                  class="absolute top-0 right-0 w-4 h-4 m-2 opacity-0 cursor-pointer deleteTask"
+                />
+              </div>
             </div>
 
             <!-- placeholder della task -->
