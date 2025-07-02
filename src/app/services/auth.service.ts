@@ -1,34 +1,38 @@
 import { Injectable } from '@angular/core';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  Auth,
+  signInWithPopup,
+  signInWithRedirect,
+  GoogleAuthProvider,
+  signOut,
+  user,
+  getRedirectResult,
+  UserInfo,
+} from '@angular/fire/auth';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  provider = new GoogleAuthProvider();
-  auth = getAuth();
+  utenteSub: BehaviorSubject<UserInfo | null> =
+    new BehaviorSubject<UserInfo | null>(null);
+  utente$ = this.utenteSub.asObservable();
 
-  singin() {
-    signInWithPopup(this.auth, this.provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        if (!credential) return;
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+  constructor(private auth: Auth) {
+    user(auth).subscribe((data) => {
+      if (!data?.providerData[0]) return;
+      this.utenteSub.next(data?.providerData[0]);
+    });
+  }
+
+  loginWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    return signInWithPopup(this.auth, provider);
+  }
+
+  logout() {
+    return signOut(this.auth);
   }
 }
