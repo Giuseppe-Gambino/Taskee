@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -6,8 +6,10 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
-export class AuthComponent {
-  constructor(public auth: AuthService) {
+export class AuthComponent implements OnInit {
+  constructor(public auth: AuthService) {}
+
+  ngOnInit(): void {
     this.auth.utente$.subscribe((data) => {
       console.log('user', data);
     });
@@ -21,5 +23,9 @@ export class AuthComponent {
     this.auth.logout();
   }
 
-  see(): void {}
+  see(): void {
+    this.auth.utente$.subscribe((data) => {
+      console.log('user', data);
+    });
+  }
 }
