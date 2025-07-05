@@ -85,7 +85,9 @@ export class AuthService {
   updateTuser(snap: DocumentSnapshot<DocumentData, DocumentData>) {
     if (!snap.exists()) return;
     const id = snap.id;
+    const boardsID: string[] = [];
     const userT = {
+      boardsID,
       id,
       ...snap.data(),
     };

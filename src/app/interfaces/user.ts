@@ -3,5 +3,5 @@ export interface TaskeeUser {
   email: string;
   photoURL: string;
   id: string;
-  boardsID?: string[];
+  boardsID: string[];
 }

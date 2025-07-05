@@ -16,6 +16,8 @@ import {
 } from '@angular/cdk/drag-drop';
 import { Board, Column, Task } from '../../interfaces/board';
 import { FirestoreService } from '../../services/firestore.service';
+import { TaskeeUser } from '../../interfaces/user';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,13 +25,19 @@ import { FirestoreService } from '../../services/firestore.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  constructor(private firestore: FirestoreService) {}
+  constructor(private firestore: FirestoreService, private auth: AuthService) {}
+
+  user!: TaskeeUser;
 
   userBoard: string = 'hFOcPrZR9gzg6GoQMO4Y';
-
   board!: Board;
 
   ngOnInit() {
+    this.auth.utente$.subscribe((data) => {
+      if (!data) return;
+      this.user = data;
+    });
+
     this.firestore.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
       if (data) {
         this.board = data;

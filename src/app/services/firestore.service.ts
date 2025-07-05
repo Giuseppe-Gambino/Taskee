@@ -8,8 +8,11 @@ import {
   docData,
   CollectionReference,
   DocumentData,
+  getDoc,
+  updateDoc,
 } from '@angular/fire/firestore';
 import {
+  BehaviorSubject,
   combineLatest,
   firstValueFrom,
   map,
@@ -19,38 +22,73 @@ import {
 } from 'rxjs';
 import { Board, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { TaskeeUser } from '../interfaces/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirestoreService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(
+    private oldFirestore: AngularFirestore,
+    private firestore: Firestore
+  ) {}
+
+  boardToDiplaySub: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  boardToDiplay$: Observable<string> = this.boardToDiplaySub.asObservable();
+
+  selectedBoard(idBoard: string) {
+    this.boardToDiplaySub.next(idBoard);
+  }
 
   // board ----------------------------------------------
 
-  addBoard(board: Board) {
-    return this.firestore.collection<Board>('boards').add(board);
+  async addBoard(
+    idUser: string,
+    user: TaskeeUser,
+    newBoard: { name: string; color: string }
+  ) {
+    const boardColl = collection(this.firestore, 'boards');
+    const docRef = await addDoc(boardColl, newBoard);
+    const id = docRef.id;
+
+    this.boardToUser(idUser, id, user);
+
+    const boardPreview = {
+      id,
+      name: newBoard.name,
+      color: newBoard.color,
+    };
+
+    return boardPreview;
+  }
+
+  async boardToUser(idUser: string, idboard: string, user: TaskeeUser) {
+    const newiDs: string[] = user.boardsID;
+    newiDs.push(idboard);
+
+    const userRef = doc(this.firestore, 'users', idUser);
+    await updateDoc(userRef, { boardsID: newiDs });
   }
 
   getBoards(): Observable<Board[]> {
-    return this.firestore
+    return this.oldFirestore
       .collection<Board>('boards')
       .valueChanges({ idField: 'id' });
   }
 
   getBoardByid(id: string): Observable<Board | undefined> {
-    return this.firestore
+    return this.oldFirestore
       .collection<Board>('boards')
       .doc(id)
       .valueChanges({ idField: 'id' });
   }
 
   updateBoard(id: string, board: Partial<Board>) {
-    return this.firestore.collection<Board>('boards').doc(id).update(board);
+    return this.oldFirestore.collection<Board>('boards').doc(id).update(board);
   }
 
   deleteBoard(id: string) {
-    return this.firestore.collection<Board>('boards').doc(id).delete();
+    return this.oldFirestore.collection<Board>('boards').doc(id).delete();
   }
 
   // column -------------------------------------------
@@ -59,7 +97,7 @@ export class FirestoreService {
     newColumn: { name: string; color: string; order: number },
     idBoard: string
   ) {
-    return this.firestore
+    return this.oldFirestore
       .collection<{ name: string; color: string; order: number }>(
         `boards/${idBoard}/columns`
       )
@@ -73,14 +111,14 @@ export class FirestoreService {
       order: column.order,
     };
 
-    return this.firestore
+    return this.oldFirestore
       .collection<Column>(`boards/${idBoard}/columns`)
       .doc(column.id)
       .update(newColumn);
   }
 
   getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {
-    return this.firestore
+    return this.oldFirestore
       .collection<Column>(`boards/${idBoard}/columns`, (ref) =>
         ref.orderBy('order')
       )
@@ -95,7 +133,7 @@ export class FirestoreService {
       order: task.order,
     };
 
-    return this.firestore
+    return this.oldFirestore
       .collection<Partial<Task>>(`boards/${idBoard}/columns/${idColumn}/tasks`)
       .add(newTask);
   }
@@ -108,14 +146,14 @@ export class FirestoreService {
 
     console.log('aggiorno task');
 
-    return this.firestore
+    return this.oldFirestore
       .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
       .doc(task.id)
       .update(newTask);
   }
 
   deleteTask(idBoard: string, idColumn: string, idTask: string) {
-    return this.firestore
+    return this.oldFirestore
       .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`)
       .doc(idTask)
       .delete();
@@ -125,7 +163,7 @@ export class FirestoreService {
     idBoard: string,
     idColumn: string
   ): Observable<Task[]> {
-    return this.firestore
+    return this.oldFirestore
       .collection<Task>(`boards/${idBoard}/columns/${idColumn}/tasks`, (ref) =>
         ref.orderBy('order')
       )
@@ -135,14 +173,14 @@ export class FirestoreService {
   // get full board ----------------------------------------------
 
   getFullBoard(idBoard: string): Observable<Board | undefined> {
-    return this.firestore
+    return this.oldFirestore
       .doc<Board>(`boards/${idBoard}`)
       .valueChanges()
       .pipe(
         switchMap((board) => {
           if (!board) return of(undefined);
 
-          return this.firestore
+          return this.oldFirestore
             .collection<Column>(`boards/${idBoard}/columns`, (ref) =>
               ref.orderBy('order')
             )
@@ -156,7 +194,7 @@ export class FirestoreService {
                     const columnId = colSnap.payload.doc.id;
                     const columnData = colSnap.payload.doc.data() as Column;
 
-                    return this.firestore
+                    return this.oldFirestore
                       .collection<Task>(
                         `boards/${idBoard}/columns/${columnId}/tasks`,
                         (ref) => ref.orderBy('order')

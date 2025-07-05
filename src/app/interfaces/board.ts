@@ -1,7 +1,7 @@
 export interface Board {
-  user: string;
   id: string;
   name: string;
+  color: string;
   columns: Column[];
 }
 
