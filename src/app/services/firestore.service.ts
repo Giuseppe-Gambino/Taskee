@@ -20,7 +20,7 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { Board, Column, Task } from '../interfaces/board';
+import { Board, BoardDTO, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { TaskeeUser } from '../interfaces/user';
 
@@ -53,7 +53,7 @@ export class FirestoreService {
 
     this.boardToUser(idUser, id, user);
 
-    const boardPreview = {
+    const boardPreview: BoardDTO = {
       id,
       name: newBoard.name,
       color: newBoard.color,
@@ -76,12 +76,30 @@ export class FirestoreService {
       .valueChanges({ idField: 'id' });
   }
 
-  getBoardByid(id: string): Observable<Board | undefined> {
-    return this.oldFirestore
-      .collection<Board>('boards')
-      .doc(id)
-      .valueChanges({ idField: 'id' });
+  async getBoardByid(idBoards: string[]) {
+    const boardArr: BoardDTO[] = [];
+    for (const uid of idBoards) {
+      const boardRef = doc(this.firestore, 'boards', uid);
+      const snap = await getDoc(boardRef);
+      if (snap.exists()) {
+        const id = snap.id;
+        const data = snap.data() as BoardDTO;
+        boardArr.push({
+          id,
+          name: data.name,
+          color: data.color,
+        });
+      }
+    }
+    return boardArr;
   }
+
+  // getBoardByidd(id: string): Observable<Board | undefined> {
+  //   return this.oldFirestore
+  //     .collection<Board>('boards')
+  //     .doc(id)
+  //     .valueChanges({ idField: 'id' });
+  // }
 
   updateBoard(id: string, board: Partial<Board>) {
     return this.oldFirestore.collection<Board>('boards').doc(id).update(board);

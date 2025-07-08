@@ -5,6 +5,12 @@ export interface Board {
   columns: Column[];
 }
 
+export interface BoardDTO {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface Column {
   id?: string;
   name: string;
