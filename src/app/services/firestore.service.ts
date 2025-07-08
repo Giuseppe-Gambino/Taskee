@@ -71,12 +71,6 @@ export class FirestoreService {
     await updateDoc(userRef, { boardsID: newiDs });
   }
 
-  getBoards(): Observable<Board[]> {
-    return this.oldFirestore
-      .collection<Board>('boards')
-      .valueChanges({ idField: 'id' });
-  }
-
   async getBoardByid(idBoards: string[]) {
     const boardArr: BoardDTO[] = [];
     for (const uid of idBoards) {
@@ -118,17 +112,36 @@ export class FirestoreService {
       .add(newColumn);
   }
 
-  updateColumn(idBoard: string, column: Column) {
+  async updateColumnOrder(idBoard: string, column: Partial<Column>) {
+    const columnRef = doc(
+      this.firestore,
+      `boards/${idBoard}/columns/${column.id}`
+    );
+
     const newColumn: Partial<Column> = {
-      name: column.name,
-      color: column.color,
       order: column.order,
     };
 
-    return this.oldFirestore
-      .collection<Column>(`boards/${idBoard}/columns`)
-      .doc(column.id)
-      .update(newColumn);
+    await updateDoc(columnRef, newColumn);
+  }
+
+  async updateColumn(idBoard: string, column: Partial<Column>) {
+    const columnRef = doc(
+      this.firestore,
+      `boards/${idBoard}/columns/${column.id}`
+    );
+
+    const newColumn: Partial<Column> = {
+      name: column.name,
+      color: column.color,
+    };
+
+    await updateDoc(columnRef, newColumn);
+  }
+
+  async deleteColumn(idBoard: string, id: string) {
+    const boardRef = doc(this.firestore, `boards/${idBoard}/columns`, id);
+    await deleteDoc(boardRef);
   }
 
   getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {

@@ -249,10 +249,23 @@ export class DashboardComponent implements OnInit {
   updateElement(element: Task | Column, idColumn: string) {
     if (!element.id) return;
     if (this.isColumn(element)) {
-      this.firestore.updateColumn(this.board.id, element);
+      this.firestore.updateColumnOrder(this.board.id, element);
     } else {
       this.firestore.updateTask(this.board.id, idColumn, element);
     }
+  }
+
+  updateColumn(idColumn: string, name: string, color: string) {
+    const newColumn = {
+      id: idColumn,
+      name: name,
+      color: color,
+    };
+    this.firestore.updateColumn(this.board.id, newColumn);
+  }
+
+  deleteColumn(idColumn: string) {
+    this.firestore.deleteColumn(this.board.id, idColumn);
   }
 
   // animazione per singola column
