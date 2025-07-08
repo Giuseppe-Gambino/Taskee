@@ -13,10 +13,19 @@
   <div class="flex gap-x-6">
     @for (item of boardsArr; track item.id) {
     <app-card-board-home
-      [boardName]="item.name"
-      [boardID]="item.id"
+      (edit)="editBoard($event)"
+      (delete)="filterDelete(item.id)"
+      [board]="item"
     ></app-card-board-home>
     }
+    <div
+      *ngIf="!boardsArr"
+      class="rounded-lg skeleton opacity-40 card-board"
+    ></div>
+    <div
+      *ngIf="!boardsArr"
+      class="rounded-lg skeleton opacity-40 card-board"
+    ></div>
   </div>
 </div>
 
@@ -28,7 +37,7 @@
 
   <div class="flex gap-x-6">
     <app-card-board-home
-      [boardName]="'Place holder Board Name'"
+      [board]="{ name: 'Place holder Board Name', color: '#ff0000', id: '1' }"
     ></app-card-board-home>
   </div>
 </div>

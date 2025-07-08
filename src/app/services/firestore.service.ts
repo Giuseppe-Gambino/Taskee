@@ -10,6 +10,7 @@ import {
   DocumentData,
   getDoc,
   updateDoc,
+  deleteDoc,
 } from '@angular/fire/firestore';
 import {
   BehaviorSubject,
@@ -94,19 +95,14 @@ export class FirestoreService {
     return boardArr;
   }
 
-  // getBoardByidd(id: string): Observable<Board | undefined> {
-  //   return this.oldFirestore
-  //     .collection<Board>('boards')
-  //     .doc(id)
-  //     .valueChanges({ idField: 'id' });
-  // }
-
-  updateBoard(id: string, board: Partial<Board>) {
-    return this.oldFirestore.collection<Board>('boards').doc(id).update(board);
+  async updateBoard(id: string, board: { name: string; color: string }) {
+    const boardRef = doc(this.firestore, 'boards', id);
+    await updateDoc(boardRef, board);
   }
 
-  deleteBoard(id: string) {
-    return this.oldFirestore.collection<Board>('boards').doc(id).delete();
+  async deleteBoard(id: string) {
+    const boardRef = doc(this.firestore, 'boards', id);
+    await deleteDoc(boardRef);
   }
 
   // column -------------------------------------------

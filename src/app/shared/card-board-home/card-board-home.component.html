@@ -1,11 +1,60 @@
 <div
   class="flex flex-col justify-between px-5 py-4 rounded-lg liquid-glass card-board"
 >
-  <h1 class="font-semibold md:text-2xl">{{ boardName }}</h1>
+  <h1 class="font-semibold md:text-2xl">{{ board.name }}</h1>
   <div class="flex justify-between">
-    <button class="bg-gray-700 border-gray-700 btn btn-sm">Modifica</button
+    <button
+      (click)="modal.showModal()"
+      class="bg-gray-700 border-gray-700 btn btn-sm"
+    >
+      Modifica</button
     ><button (click)="goToBoard()" class="border-sky-800 bg-sky-700 btn btn-sm">
       Apri
     </button>
   </div>
 </div>
+
+<dialog #modal class="modal">
+  <div class="modal-box liquid-glass">
+    <div class="mb-3">
+      <h3 class="text-xl font-bold">Titolo</h3>
+      <input
+        [(ngModel)]="nameBoard"
+        type="text"
+        class="w-full p-3 mt-3 outline-none rounded-xl bg-slate-800 opacity-80"
+      />
+    </div>
+    <div>
+      <h3 class="text-xl font-bold">Colore</h3>
+      <input
+        [(ngModel)]="colorBoard"
+        type="color"
+        class="h-12 w-[20%] p-2 mt-3 outline-none rounded-xl bg-slate-800 opacity-80"
+      />
+    </div>
+    <div class="modal-action">
+      <form method="dialog" class="flex gap-x-3">
+        <!-- if there is a button in form, it will close the modal -->
+        <button
+          (click)="deleteBoard()"
+          class="box-border h-3 py-1 text-base text-white bg-red-700 border-0 outline-none btn btn-sm btn-ghost hover:bg-red-950"
+        >
+          Elimina
+        </button>
+        <button
+          (click)="clearInput()"
+          class="box-border h-3 py-1 text-base text-white border-0 outline-none hover:opacity-75 btn btn-sm btn-active btn-ghost"
+        >
+          Annulla
+        </button>
+        <button
+          (click)="editBoard()"
+          [disabled]="!nameBoard"
+          class="px-3 py-1 text-white bg-teal-600 border-none hover:opacity-75 btn btn-sm"
+        >
+          Salva
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>

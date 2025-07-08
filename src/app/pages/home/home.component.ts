@@ -12,7 +12,7 @@ import { Board, BoardDTO } from '../../interfaces/board';
 export class HomeComponent implements OnInit {
   user!: TaskeeUser;
 
-  boardsArr: BoardDTO[] = [];
+  boardsArr!: BoardDTO[];
 
   constructor(private firestore: FirestoreService, private auth: AuthService) {}
 
@@ -45,5 +45,18 @@ export class HomeComponent implements OnInit {
   clearInput() {
     this.nameBoard = null;
     this.colorBoard = '#212121';
+  }
+
+  filterDelete(id: string) {
+    this.boardsArr = this.boardsArr.filter((board) => board.id !== id);
+  }
+
+  editBoard(board: BoardDTO) {
+    this.boardsArr = this.boardsArr.map((item) => {
+      if (item.id === board.id) {
+        return board;
+      }
+      return item;
+    });
   }
 }

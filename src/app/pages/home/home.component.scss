@@ -5,3 +5,9 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(5px);
 }
+
+.card-board {
+  width: clamp(13rem, 30vw, 18rem);
+  aspect-ratio: 16/9;
+  height: 10rem;
+}
