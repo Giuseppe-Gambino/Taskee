@@ -237,10 +237,6 @@ export class DashboardComponent implements OnInit {
     this.colorColumn = '#212121';
   }
 
-  deleteTask(idColumn: string, idTask: string) {
-    this.firestore.deleteTask(this.idBoard, idColumn, idTask);
-  }
-
   isColumn(el: Task | Column): el is Column {
     return 'name' in el && 'order' in el;
   }

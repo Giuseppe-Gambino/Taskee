@@ -1,0 +1,36 @@
+.liquid-glass {
+  background-color: #286aa37e;
+  box-shadow: inset 0px 0px 5px 0px rgba(255, 255, 255, 0.851),
+    inset 0px 0px 20px 0px #3a8ad2;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
+}
+
+.task:active {
+  cursor: grabbing;
+}
+
+.task > .tag {
+  transition: 150ms ease-out;
+}
+
+.task:active > .tag {
+  height: calc(100% - 10px);
+  left: 1.4rem;
+  top: 5px;
+  z-index: 10;
+  transition: 150ms ease-out;
+}
+
+.task > .text {
+  transition: 150ms ease-out;
+}
+
+.task:active > .text {
+  padding-left: 1.5rem;
+  transition: 150ms ease-out;
+}
+
+.deleteTask:hover > img {
+  opacity: 1;
+}

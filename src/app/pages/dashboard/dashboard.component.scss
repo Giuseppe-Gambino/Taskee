@@ -23,34 +23,6 @@
   border-radius: 5px;
 }
 
-.task:active {
-  cursor: grabbing;
-}
-
-.task > .tag {
-  transition: 150ms ease-out;
-}
-
-.task:active > .tag {
-  height: calc(100% - 10px);
-  left: 1.4rem;
-  top: 5px;
-  z-index: 10;
-  transition: 150ms ease-out;
-}
-
-.task > .text {
-  transition: 150ms ease-out;
-}
-
-.task:active > .text {
-  padding-left: 1.5rem;
-  transition: 150ms ease-out;
-}
-
-.deleteTask:hover > img {
-  opacity: 1;
-}
 .drag-a {
   height: calc(100% - 3rem);
   left: 1.7rem;
