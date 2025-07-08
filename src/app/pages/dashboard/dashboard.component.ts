@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   Component,
   ElementRef,
@@ -25,11 +26,15 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  constructor(private firestore: FirestoreService, private auth: AuthService) {}
+  constructor(
+    private firestore: FirestoreService,
+    private auth: AuthService,
+    private route: ActivatedRoute
+  ) {}
 
   user!: TaskeeUser;
 
-  userBoard: string = 'hFOcPrZR9gzg6GoQMO4Y';
+  idBoard!: string;
   board!: Board;
 
   ngOnInit() {
@@ -38,7 +43,13 @@ export class DashboardComponent implements OnInit {
       this.user = data;
     });
 
-    this.firestore.getFullBoard('hFOcPrZR9gzg6GoQMO4Y').subscribe((data) => {
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (!id) return;
+      this.idBoard = id;
+    });
+
+    this.firestore.getFullBoard(this.idBoard).subscribe((data) => {
       if (data) {
         this.board = data;
         console.log(data);
@@ -227,7 +238,7 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteTask(idColumn: string, idTask: string) {
-    this.firestore.deleteTask(this.userBoard, idColumn, idTask);
+    this.firestore.deleteTask(this.idBoard, idColumn, idTask);
   }
 
   isColumn(el: Task | Column): el is Column {
