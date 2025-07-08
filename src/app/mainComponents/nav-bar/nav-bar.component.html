@@ -17,11 +17,19 @@
           src="icons8-casa-48.png"
           alt="home"
           width="32"
+          routerLink="/"
         />
         <h4 class="text-xl font-semibold">Home</h4>
       </div>
-      <div class="flex items-center gap-x-6">
-        <img class="cursor-pointer" src="user.png" alt="profile" width="32" />
+      <div *ngIf="user" class="flex items-center gap-x-6">
+        <img
+          [ngClass]="{ 'border-2': user.photoURL }"
+          class="rounded-full cursor-pointer"
+          [src]="user.photoURL || 'user.png'"
+          alt="profile"
+          referrerpolicy="no-referrer"
+          width="32"
+        />
         <h4 class="text-xl font-semibold">Profile</h4>
       </div>
       <div class="flex items-center gap-x-6">

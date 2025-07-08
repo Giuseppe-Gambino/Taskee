@@ -1,11 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { TaskeeUser } from '../../interfaces/user';
 
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.scss',
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
+  constructor(private auth: AuthService) {}
+
+  user!: TaskeeUser;
+
+  ngOnInit(): void {
+    this.auth.utente$.subscribe((data) => {
+      if (!data) return;
+      this.user = data;
+      console.log('Utente autenticato:', this.user);
+      console.log(this.user.photoURL);
+    });
+  }
+
   isOpen: boolean | null = null;
 
   navToggle() {
