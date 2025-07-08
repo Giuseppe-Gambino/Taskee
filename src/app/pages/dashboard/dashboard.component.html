@@ -19,33 +19,10 @@
     </div>
     <div class="flex items-center gap-x-8">
       <div class="flex items-center gap-x-4">
-        <div class="-space-x-2 avatar-group rtl:space-x-reverse">
+        <div *ngIf="user" class="-space-x-2 avatar-group rtl:space-x-reverse">
           <div class="avatar">
             <div class="w-7">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <div class="avatar">
-            <div class="w-7">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <div class="avatar">
-            <div class="w-7">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <div class="avatar">
-            <div class="w-7">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
+              <img [src]="user.photoURL" referrerpolicy="no-referrer" />
             </div>
           </div>
         </div>
