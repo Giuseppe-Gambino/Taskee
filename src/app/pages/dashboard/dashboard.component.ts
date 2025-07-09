@@ -215,7 +215,7 @@ export class DashboardComponent implements OnInit {
       order: (this.board.columns.length + 1) * 100,
     };
 
-    this.firestore.addColumn(newColumn, this.board.id);
+    this.firestore.addColumn(newColumn, this.idBoard);
   }
 
   description: string | null = null;
