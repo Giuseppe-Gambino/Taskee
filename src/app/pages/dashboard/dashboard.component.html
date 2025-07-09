@@ -1,79 +1,10 @@
 <section class="flex flex-col w-full h-full">
   <!-- header section -->
-  <div
-    class="flex justify-between items-center w-full h-[4rem] px-5 py-3 rounded-2xl backdrop-brightness-75"
-  >
-    <div class="flex items-center gap-x-6">
-      <img class="h-8" src="not.png" alt="notification" />
-      <!-- input -->
-      <div
-        class="box-border flex items-center gap-2 px-3 py-[0.35rem] rounded-xl liquid-glass"
-      >
-        <input
-          type="text"
-          class="font-semibold bg-transparent cerca"
-          placeholder="Cerca Task..."
-        />
-        <img src="lente.png" alt="lente di ricerca" width="20" />
-      </div>
-    </div>
-    <div class="flex items-center gap-x-8">
-      <div class="flex items-center gap-x-4">
-        <div *ngIf="user" class="-space-x-2 avatar-group rtl:space-x-reverse">
-          <div class="avatar">
-            <div class="w-7">
-              <img [src]="user.photoURL" referrerpolicy="no-referrer" />
-            </div>
-          </div>
-        </div>
+  <app-header-section-board [user]="user"></app-header-section-board>
 
-        <button
-          class="box-border h-3 py-1 text-base text-white border-0 hover:scale-105 hover:bg-slate-900 btn btn-sm btn-active btn-ghost"
-        >
-          <img src="add-user.png" height="20" width="20" />
-          condividi
-        </button>
-      </div>
-      <div class="flex gap-4">
-        <img
-          class="cursor-pointer w-[30px] h-[30px]"
-          src="archive.png"
-          alt="archivio"
-        />
-        <img class="cursor-pointer w-7 h-7" src="risorse.png" alt="risorse" />
-      </div>
-    </div>
-  </div>
   <!-- header bacheca -->
-  <div
-    *ngIf="board"
-    class="flex items-end justify-between w-full mt-4 mb-2 font-semibold pe-5 navDash h-14"
-  >
-    <h1 class="text-4xl font-semibold">{{ board.name }}</h1>
-    <div class="flex items-center gap-x-8">
-      <div
-        class="flex rounded-md gap-x-2 hover:bg-[#286aa3] p-2 cursor-pointer"
-      >
-        <img src="filter.png" alt="icon fiter" />
-        <p>Filters</p>
-      </div>
-      <div class="flex gap-x-2">
-        <img
-          class="h-8 p-1 cursor-pointer active-or"
-          src="column.png"
-          alt="icon columns"
-        />
-        <img
-          class="h-8 p-1 cursor-pointer"
-          src="tables.png"
-          alt="icon tables"
-        />
-      </div>
-      <div class="pb-1 border-s-2 ps-5">
-        <p class="text-3xl cursor-pointer">•••</p>
-      </div>
-    </div>
-  </div>
+  <app-header-board [board]="board"></app-header-board>
+
   <!-- main bacheca -->
   <div cdkDropListGroup class="flex-grow pt-3">
     <ul
