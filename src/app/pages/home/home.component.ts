@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
       if (!data) return;
       this.user = data;
 
-      this.firestore.getBoardByid(this.user.boardsID).then((boards) => {
+      this.firestore.getBoardDTOByid(this.user.boardsID).then((boards) => {
         this.boardsArr = boards;
         console.log('Boards:', this.boardsArr);
       });

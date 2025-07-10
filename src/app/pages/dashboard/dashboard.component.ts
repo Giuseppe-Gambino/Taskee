@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -19,18 +20,21 @@ import { Board, Column, Task } from '../../interfaces/board';
 import { FirestoreService } from '../../services/firestore.service';
 import { TaskeeUser } from '../../interfaces/user';
 import { AuthService } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private firestore: FirestoreService,
     private auth: AuthService,
     private route: ActivatedRoute
   ) {}
+
+  subscription = new Subscription();
 
   user!: TaskeeUser;
 
@@ -38,23 +42,33 @@ export class DashboardComponent implements OnInit {
   board!: Board;
 
   ngOnInit() {
-    this.auth.utente$.subscribe((data) => {
-      if (!data) return;
-      this.user = data;
-    });
+    this.subscription.add(
+      this.auth.utente$.subscribe((data) => {
+        if (!data) return;
+        this.user = data;
+      })
+    );
 
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (!id) return;
-      this.idBoard = id;
-    });
+    this.subscription.add(
+      this.route.paramMap.subscribe((params) => {
+        const id = params.get('id');
+        if (!id) return;
+        this.idBoard = id;
+      })
+    );
 
-    this.firestore.getFullBoard(this.idBoard).subscribe((data) => {
-      if (data) {
-        this.board = data;
-        console.log(data);
-      }
-    });
+    this.subscription.add(
+      this.firestore.getFullBoard(this.idBoard).subscribe((data) => {
+        if (data) {
+          this.board = data;
+          console.log(data);
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   // costruisce un array di id column per andare ad assegnare il collegamento delle list per il drag-n-drop (per dire alle liste quali elementi possono ricevere in base alla lista di provenienza)
@@ -131,8 +145,8 @@ export class DashboardComponent implements OnInit {
   // trasferisce la task da una collection all'altra facendo una delete e create
   transferTask(task: Task, idColumn: string, idColumnPre: string) {
     if (!task.id) return;
-    this.firestore.deleteTask(this.board.id, idColumnPre, task.id);
-    this.firestore.addTask(task, this.board.id, idColumn);
+    this.firestore.deleteTask(this.idBoard, idColumnPre, task.id);
+    this.firestore.addTask(task, this.idBoard, idColumn);
   }
 
   // funzione che gestisce/aggiorna l'ordinamento delle task
@@ -227,7 +241,7 @@ export class DashboardComponent implements OnInit {
       order: (length + 1) * 100,
     };
 
-    this.firestore.addTask(newTastk, this.board.id, idColumn);
+    this.firestore.addTask(newTastk, this.idBoard, idColumn);
     this.clearInput();
   }
 
@@ -243,11 +257,10 @@ export class DashboardComponent implements OnInit {
 
   // controlla se l'elemento droppato è una task o una column e usa il metodo corrispondente
   updateElement(element: Task | Column, idColumn: string) {
-    if (!element.id) return;
     if (this.isColumn(element)) {
-      this.firestore.updateColumnOrder(this.board.id, element);
+      this.firestore.updateColumnOrder(this.idBoard, element);
     } else {
-      this.firestore.updateTask(this.board.id, idColumn, element);
+      this.firestore.updateTask(this.idBoard, idColumn, element);
     }
   }
 
@@ -257,11 +270,11 @@ export class DashboardComponent implements OnInit {
       name: name,
       color: color,
     };
-    this.firestore.updateColumn(this.board.id, newColumn);
+    this.firestore.updateColumn(this.idBoard, newColumn);
   }
 
   deleteColumn(idColumn: string) {
-    this.firestore.deleteColumn(this.board.id, idColumn);
+    this.firestore.deleteColumn(this.idBoard, idColumn);
   }
 
   // animazione per singola column

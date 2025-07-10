@@ -34,13 +34,6 @@ export class FirestoreService {
     private firestore: Firestore
   ) {}
 
-  boardToDiplaySub: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  boardToDiplay$: Observable<string> = this.boardToDiplaySub.asObservable();
-
-  selectedBoard(idBoard: string) {
-    this.boardToDiplaySub.next(idBoard);
-  }
-
   // board ----------------------------------------------
 
   async addBoard(
@@ -71,7 +64,7 @@ export class FirestoreService {
     await updateDoc(userRef, { boardsID: newiDs });
   }
 
-  async getBoardByid(idBoards: string[]) {
+  async getBoardDTOByid(idBoards: string[]) {
     const boardArr: BoardDTO[] = [];
     for (const uid of idBoards) {
       const boardRef = doc(this.firestore, 'boards', uid);
