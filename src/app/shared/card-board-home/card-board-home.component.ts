@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { BoardDTO } from '../../interfaces/board';
+import { TaskeeUser } from '../../interfaces/user';
 
 @Component({
   selector: 'app-card-board-home',
@@ -24,6 +25,7 @@ export class CardBoardHomeComponent implements OnInit {
   }
 
   @Input() board!: BoardDTO;
+  @Input() user!: TaskeeUser;
 
   goToBoard() {
     if (!this.board.id) return;
@@ -31,7 +33,7 @@ export class CardBoardHomeComponent implements OnInit {
   }
 
   deleteBoard() {
-    this.firestore.deleteBoard(this.board.id);
+    this.firestore.deleteBoard(this.user.id, this.board.id, this.user);
     this.delete.emit();
   }
 

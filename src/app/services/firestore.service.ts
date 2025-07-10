@@ -87,9 +87,18 @@ export class FirestoreService {
     await updateDoc(boardRef, board);
   }
 
-  async deleteBoard(id: string) {
+  async deleteBoard(idUser: string, id: string, user: TaskeeUser) {
     const boardRef = doc(this.firestore, 'boards', id);
     await deleteDoc(boardRef);
+
+    this.deleteBoardFromUser(idUser, id, user);
+  }
+
+  async deleteBoardFromUser(idUser: string, id: string, user: TaskeeUser) {
+    const newiDs: string[] = user.boardsID.filter((idboard) => idboard !== id);
+
+    const userRef = doc(this.firestore, 'users', idUser);
+    await updateDoc(userRef, { boardsID: newiDs });
   }
 
   // column -------------------------------------------
