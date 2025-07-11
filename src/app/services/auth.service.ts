@@ -37,6 +37,9 @@ export class AuthService {
     new BehaviorSubject<TaskeeUser | null>(null);
   utente$ = this.utenteSub.asObservable();
 
+  isLoggedInSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = this.isLoggedInSub.asObservable();
+
   constructor(private auth: Auth, private firestore: Firestore) {
     user(auth).subscribe((data) => {
       if (!data) return;
@@ -53,6 +56,7 @@ export class AuthService {
 
   logout() {
     this.utenteSub.next(null);
+    this.isLoggedInSub.next(false);
     return signOut(this.auth);
   }
 
@@ -92,5 +96,14 @@ export class AuthService {
       ...snap.data(),
     };
     this.utenteSub.next(userT as TaskeeUser);
+    this.isLoggedInSub.next(true);
+  }
+
+  logged() {
+    this.isLoggedInSub.next(true);
+  }
+
+  notLogged() {
+    this.isLoggedInSub.next(false);
   }
 }

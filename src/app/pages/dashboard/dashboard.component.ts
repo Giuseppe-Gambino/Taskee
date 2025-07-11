@@ -230,6 +230,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
 
     this.firestore.addColumn(newColumn, this.idBoard);
+    this.clearInput();
   }
 
   description: string | null = null;
