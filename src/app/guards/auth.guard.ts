@@ -12,5 +12,4 @@ export const authGuard: CanActivateFn = (route, state) => {
   );
 };
 
-// Per CanActivateChild puoi esportare la stessa funzione (riutilizzo totale):
 export const authGuardChild: CanActivateChildFn = authGuard;
