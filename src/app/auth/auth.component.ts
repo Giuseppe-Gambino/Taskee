@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { TaskeeUser } from '../interfaces/user';
 
 @Component({
   selector: 'app-auth',
@@ -9,9 +10,12 @@ import { AuthService } from '../services/auth.service';
 export class AuthComponent implements OnInit {
   constructor(public auth: AuthService) {}
 
+  user!: TaskeeUser | null;
+
   ngOnInit(): void {
     this.auth.utente$.subscribe((data) => {
       console.log('user', data);
+      this.user = data;
     });
   }
 

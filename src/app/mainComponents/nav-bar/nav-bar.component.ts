@@ -10,14 +10,15 @@ import { TaskeeUser } from '../../interfaces/user';
 export class NavBarComponent implements OnInit {
   constructor(private auth: AuthService) {}
 
-  user!: TaskeeUser;
+  user!: TaskeeUser | null;
 
   ngOnInit(): void {
     this.auth.utente$.subscribe((data) => {
-      if (!data) return;
-      this.user = data;
-      console.log('Utente autenticato:', this.user);
-      console.log(this.user.photoURL);
+      if (data) {
+        this.user = data;
+      } else {
+        this.user = null;
+      }
     });
   }
 
