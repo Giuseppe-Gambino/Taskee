@@ -1,8 +1,8 @@
 <div
   *ngIf="board"
-  class="flex items-end justify-between w-full mt-4 mb-2 font-semibold pe-5 navDash h-14"
+  class="flex flex-col items-end justify-between w-full mt-4 mb-2 font-semibold gap-y-5 sm:flex-row pe-5 navDash min-h-14"
 >
-  <h1 class="text-4xl font-semibold">{{ board.name }}</h1>
+  <h1 class="self-start text-4xl font-semibold">{{ board.name }}</h1>
   <div class="flex items-center gap-x-8">
     <div class="flex rounded-md gap-x-2 hover:bg-[#286aa3] p-2 cursor-pointer">
       <img src="filter.png" alt="icon fiter" />

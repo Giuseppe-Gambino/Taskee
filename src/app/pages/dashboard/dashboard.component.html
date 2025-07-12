@@ -6,7 +6,7 @@
   <app-header-board [board]="board"></app-header-board>
 
   <!-- main bacheca -->
-  <div cdkDropListGroup class="flex-grow pt-3">
+  <div cdkDropListGroup class="flex-grow pt-3 w-[91vw] over overflow-x-scroll">
     <ul
       *ngIf="board"
       cdkDropList
@@ -246,9 +246,9 @@
         <!-- header colonna -->
         <div
           (click)="modal.showModal()"
-          class="flex justify-center px-3 py-2 font-semibold rounded-lg gap-x-6"
+          class="flex justify-center px-3 py-2 font-semibold rounded-lg min-w-11 gap-x-6"
         >
-          <h6>Aggiungi un lista</h6>
+          <h6 class="hidden lg:block whitespace-nowrap">Aggiungi un lista</h6>
           <img src="add-column.png" alt="icon add list" width="25" />
         </div>
         <dialog #modal class="modal">

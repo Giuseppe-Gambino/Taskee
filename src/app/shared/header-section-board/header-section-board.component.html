@@ -5,11 +5,11 @@
     <img class="h-8" src="not.png" alt="notification" />
     <!-- input -->
     <div
-      class="box-border flex items-center gap-2 px-3 py-[0.35rem] rounded-xl liquid-glass"
+      class="box-border flex items-center md:gap-2 px-3 py-[0.35rem] rounded-xl liquid-glass"
     >
       <input
         type="text"
-        class="font-semibold bg-transparent cerca"
+        class="w-0 font-semibold bg-transparent md:w-40"
         placeholder="Cerca Task..."
       />
       <img src="lente.png" alt="lente di ricerca" width="20" />
@@ -17,7 +17,10 @@
   </div>
   <div class="flex items-center gap-x-8">
     <div class="flex items-center gap-x-4">
-      <div *ngIf="user" class="-space-x-2 avatar-group rtl:space-x-reverse">
+      <div
+        *ngIf="user"
+        class="-space-x-2 avatar-group rtl:space-x-reverse max-sm:hidden"
+      >
         <div class="avatar">
           <div class="w-7">
             <img [src]="user.photoURL" referrerpolicy="no-referrer" />
@@ -26,10 +29,15 @@
       </div>
 
       <button
-        class="box-border h-3 py-1 text-base text-white border-0 hover:scale-105 hover:bg-slate-900 btn btn-sm btn-active btn-ghost"
+        class="box-border h-3 py-1 text-base text-white border-0 max-sm:hidden hover:scale-105 hover:bg-slate-900 btn btn-sm btn-active btn-ghost"
       >
         <img src="add-user.png" height="20" width="20" />
-        condividi
+        <span class="hidden md:block">condividi</span>
+      </button>
+      <button
+        class="box-border hidden h-3 py-1 text-base text-white border-0 sm:hidden max-sm:block hover:scale-105 hover:bg-slate-900 btn btn-sm btn-active btn-ghost"
+      >
+        <img src="team.png" height="20" width="20" />
       </button>
     </div>
     <div class="flex gap-4">
