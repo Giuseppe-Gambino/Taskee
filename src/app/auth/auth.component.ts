@@ -10,7 +10,7 @@ import { TaskeeUser } from '../interfaces/user';
 export class AuthComponent implements OnInit {
   constructor(public auth: AuthService) {}
 
-  user!: TaskeeUser | null;
+  user!: TaskeeUser | null | undefined;
 
   ngOnInit(): void {
     this.auth.utente$.subscribe((data) => {

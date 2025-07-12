@@ -28,29 +28,49 @@ import {
 } from '@angular/fire/firestore';
 import { collection } from 'firebase/firestore';
 import { reauthenticateWithCredential } from 'firebase/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  utenteSub: BehaviorSubject<TaskeeUser | null> =
-    new BehaviorSubject<TaskeeUser | null>(null);
+  utenteSub: BehaviorSubject<TaskeeUser | null | undefined> =
+    new BehaviorSubject<TaskeeUser | null | undefined>(undefined);
   utente$ = this.utenteSub.asObservable();
 
   isLoggedInSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSub.asObservable();
 
-  constructor(private auth: Auth, private firestore: Firestore) {
-    user(auth).subscribe((data) => {
-      if (!data) return;
-      const userRef = doc(this.firestore, 'users', data.uid);
-      getDoc(userRef).then((snap) => {
-        if (snap.exists()) {
-          this.updateTuser(snap);
-        } else {
-          this.utenteSub.next(null);
-        }
-      });
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+    private afAuth: AngularFireAuth
+  ) {
+    // user(auth).subscribe((data) => {
+    //   if (!data) return;
+    //   const userRef = doc(this.firestore, 'users', data.uid);
+    //   getDoc(userRef).then((snap) => {
+    //     if (snap.exists()) {
+    //       this.updateTuser(snap);
+    //     } else {
+    //       this.utenteSub.next(null);
+    //     }
+    //   });
+    // });
+
+    this.afAuth.onAuthStateChanged(async (data) => {
+      if (data) {
+        const userRef = doc(this.firestore, 'users', data.uid);
+        getDoc(userRef).then((snap) => {
+          if (snap.exists()) {
+            this.updateTuser(snap);
+          } else {
+            this.utenteSub.next(null);
+          }
+        });
+      } else {
+        this.utenteSub.next(null);
+      }
     });
   }
 
