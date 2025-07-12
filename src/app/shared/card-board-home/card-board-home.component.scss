@@ -1,4 +1,13 @@
 .card-board {
-  width: clamp(13rem, 30vw, 18rem);
+  width: clamp(10.5rem, 30vw, 18rem);
+  min-height: 7rem;
   aspect-ratio: 16/9;
+}
+
+@media not all and (min-width: 768px) {
+  .card-board {
+    width: 100%;
+    max-height: 5rem;
+    aspect-ratio: none;
+  }
 }
