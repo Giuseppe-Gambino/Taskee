@@ -3,24 +3,13 @@ import {
   Firestore,
   collection,
   addDoc,
-  collectionData,
   doc,
-  docData,
-  CollectionReference,
-  DocumentData,
   getDoc,
+  getDocs,
   updateDoc,
   deleteDoc,
 } from '@angular/fire/firestore';
-import {
-  BehaviorSubject,
-  combineLatest,
-  firstValueFrom,
-  map,
-  Observable,
-  of,
-  switchMap,
-} from 'rxjs';
+import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { Board, BoardDTO, Column, Task } from '../interfaces/board';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { TaskeeUser } from '../interfaces/user';
@@ -87,12 +76,26 @@ export class FirestoreService {
     await updateDoc(boardRef, board);
   }
 
-  async deleteBoard(idUser: string, id: string, user: TaskeeUser) {
-    const boardRef = doc(this.firestore, 'boards', id);
+  async deleteBoard(idUser: string, boardId: string, user: TaskeeUser) {
+    const columnsRef = collection(this.firestore, `boards/${boardId}/columns`);
+    const columnsSnap = await getDocs(columnsRef);
+
+    for (const columnDoc of columnsSnap.docs) {
+      await this.deleteColumn(boardId, columnDoc.id);
+    }
+
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
     await deleteDoc(boardRef);
 
-    this.deleteBoardFromUser(idUser, id, user);
+    this.deleteBoardFromUser(idUser, boardId, user);
   }
+
+  // async deleteBoard(idUser: string, id: string, user: TaskeeUser) {
+  //   const boardRef = doc(this.firestore, 'boards', id);
+  //   await deleteDoc(boardRef);
+
+  //   this.deleteBoardFromUser(idUser, id, user);
+  // }
 
   async deleteBoardFromUser(idUser: string, id: string, user: TaskeeUser) {
     const newiDs: string[] = user.boardsID.filter((idboard) => idboard !== id);
@@ -141,9 +144,28 @@ export class FirestoreService {
     await updateDoc(columnRef, newColumn);
   }
 
-  async deleteColumn(idBoard: string, id: string) {
-    const boardRef = doc(this.firestore, `boards/${idBoard}/columns`, id);
-    await deleteDoc(boardRef);
+  // async deleteColumn(idBoard: string, id: string) {
+  //   const boardRef = doc(this.firestore, `boards/${idBoard}/columns`, id);
+  //   await deleteDoc(boardRef);
+  // }
+
+  async deleteColumn(boardId: string, columnId: string) {
+    const tasksRef = collection(
+      this.firestore,
+      `boards/${boardId}/columns/${columnId}/tasks`
+    );
+    const tasksSnap = await getDocs(tasksRef);
+
+    const deleteTasksPromises = tasksSnap.docs.map((taskDoc) =>
+      deleteDoc(taskDoc.ref)
+    );
+    await Promise.all(deleteTasksPromises);
+
+    const columnRef = doc(
+      this.firestore,
+      `boards/${boardId}/columns/${columnId}`
+    );
+    await deleteDoc(columnRef);
   }
 
   getColumnByBoardId(idBoard: string): Observable<Column[] | undefined> {
