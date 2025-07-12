@@ -1,7 +1,7 @@
-<header class="relative z-10 w-24">
+<header class="relative z-10 hidden w-24 md:block">
   <nav
     [ngClass]="navStateClass"
-    class="flex justify-start py-4 h-[98vh] mx rounded-2xl px-[20px] overflow-hidden"
+    class="flex justify-start py-4 h-[98vh] mx rounded-2xl px-[20px] overflow-hidden nav-desk liquid-glass"
   >
     <div class="flex flex-col items-start gap-6">
       <img
@@ -54,5 +54,46 @@
         <h4 class="text-xl font-semibold">friends</h4>
       </div>
     </div>
+  </nav>
+</header>
+
+<header class="fixed header-mob bottom-3 md:hidden">
+  <nav
+    class="z-10 flex flex-row-reverse justify-around p-4 rounded-xl liquid-glass nav-mob"
+  >
+    <div>
+      @if (user) {
+
+      <img
+        class="border-2 rounded-full cursor-pointer"
+        [src]="user.photoURL"
+        alt="profile"
+        referrerpolicy="no-referrer"
+        width="40"
+        routerLink="/auth"
+      />
+      } @else {
+      <img
+        class="rounded-full cursor-pointer"
+        src="user.png"
+        alt="profile"
+        referrerpolicy="no-referrer"
+        width="40"
+        routerLink="/auth"
+      />
+      }
+    </div>
+
+    <img
+      class="cursor-pointer"
+      src="icons8-casa-48.png"
+      alt="home"
+      width="40"
+      routerLink="/"
+    />
+
+    <img class="cursor-pointer" src="boards.png" alt="Boards" width="40" />
+
+    <img class="cursor-pointer" src="team.png" alt="friends" width="38" />
   </nav>
 </header>

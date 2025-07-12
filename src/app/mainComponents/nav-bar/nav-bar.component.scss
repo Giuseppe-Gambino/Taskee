@@ -1,10 +1,19 @@
-nav {
-  box-shadow: inset 0px 0px 7px 0px rgba(255, 255, 255, 0.851),
-    inset 0px 0px 20px 0px #3a8ad2;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+.nav-desk {
+  // box-shadow: inset 0px 0px 7px 0px rgba(255, 255, 255, 0.851),
+  //   inset 0px 0px 20px 0px #3a8ad2;
+  // -webkit-backdrop-filter: blur(10px);
+  // backdrop-filter: blur(10px);
   transition: 300ms ease-in-out;
   width: 4.5rem;
+}
+
+.header-mob {
+  width: 100%;
+  max-width: calc(100vw - 1.5rem);
+}
+
+.nav-mob {
+  width: -webkit-fill-available;
 }
 
 .navCollapse {
