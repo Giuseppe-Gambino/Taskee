@@ -3,7 +3,7 @@
   <app-header-section-board [user]="user"></app-header-section-board>
 
   <!-- header bacheca -->
-  <app-header-board [board]="board"></app-header-board>
+  <app-header-board (addList)="callModal()" [board]="board"></app-header-board>
 
   <!-- main bacheca -->
   <div

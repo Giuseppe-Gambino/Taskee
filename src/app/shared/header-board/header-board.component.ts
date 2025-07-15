@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Board } from '../../interfaces/board';
 
 @Component({
@@ -8,4 +8,9 @@ import { Board } from '../../interfaces/board';
 })
 export class HeaderBoardComponent {
   @Input() board!: Board;
+  @Output() addList = new EventEmitter<void>();
+
+  addNewList() {
+    this.addList.emit();
+  }
 }

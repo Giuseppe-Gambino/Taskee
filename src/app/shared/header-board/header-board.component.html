@@ -3,9 +3,10 @@
   class="flex flex-col items-end justify-between w-full mt-4 mb-2 font-semibold gap-y-5 sm:flex-row pe-5 navDash min-h-14"
 >
   <h1 class="self-start text-4xl font-semibold">{{ board.name }}</h1>
-  <div class="flex items-center gap-x-8">
+  <div class="flex items-center justify-between w-full md:gap-x-8">
     <div
-      class="flex justify-center gap-x-2 px-4 py-2 font-semibold w-30 max-h-12 bg-[#ffffff3f] cursor-pointer rounded-lg"
+      (click)="addNewList()"
+      class="flex justify-center gap-x-2 px-4 py-2 font-semibold w-30 max-h-12 bg-[#ffffff3f] cursor-pointer rounded-lg sm:hidden"
     >
       <img src="add-column.png" alt="icon add list" width="25" />
       <p>Lista</p>

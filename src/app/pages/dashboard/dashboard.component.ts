@@ -286,4 +286,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   grabEnd(col: HTMLElement) {
     col.classList.remove('column-move');
   }
+
+  @ViewChild('addCol') addCollRef!: ElementRef<HTMLDialogElement>;
+
+  callModal() {
+    this.addCollRef.nativeElement.showModal();
+  }
 }
